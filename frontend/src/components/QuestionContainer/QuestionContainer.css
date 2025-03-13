@@ -1,0 +1,51 @@
+.container {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+}
+
+.questionHeader {
+    text-align: left;
+    align-items: center;
+}
+
+#questionText {
+    font-family:Arial, Helvetica, sans-serif; 
+    color: black;
+    overflow-x: auto;
+    font-size: medium;
+    white-space: pre-wrap;
+}
+
+.answerHeader {
+    text-align: left;
+    align-items: center;
+    margin: 25px
+}
+
+#answerText {
+    font-family: Arial, Helvetica, sans-serif;
+    color: black;
+    overflow-x: auto;
+    font-size: medium;
+    white-space: pre-wrap;
+}
+
+#yourAnswerLabel {
+    font-weight: bold;
+}
+
+#showAnswerButton {
+    margin-top: 20px;
+}
+
+.defaultLRPadding {
+    padding: 0px 25px;
+}
+
+.defaultMargins {
+    margin: 25px;
+}
+
+.zIndex {
+    z-index: 1;
+}

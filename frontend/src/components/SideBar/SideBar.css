@@ -1,0 +1,24 @@
+.sideBarBackground {
+    background: linear-gradient(#21d4fc, #a238fe);
+    height: 100vh;
+}
+
+.verticalFlex {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.titleText {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 70px;
+    flex: 1;
+    margin: 5;
+}
+
+.iconSize {
+    height: 200px ; 
+    width: 200px
+}
