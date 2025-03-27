@@ -1,5 +1,6 @@
 import Container from "react-bootstrap/Container";
 import IQuestionInterface from "./components/IQuestionOptions";
+import { Defaults } from "./defaults";
 
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -10,13 +11,26 @@ import "./App.css";
 import SideBar from "./components/SideBar/SideBar";
 import { useEffect, useState } from "react";
 import axios, { CanceledError } from "axios";
-import { Button } from "react-bootstrap";
+import {
+  Category,
+  Difficulty,
+  Type,
+  getCategoryFromString,
+  getDifficultyFromString,
+  getTypeFromString,
+} from "./enumOptions";
 
 function App() {
-  const [question, setQuestion] = useState("test");
-  const [answer, setAnswer] = useState("test");
+  let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
+
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
 
   const [error, setError] = useState("");
+
+  const [questionCategory, setQuestionCategory] = useState(Category.Python);
+  const [questionDifficulty, setQuestionDifficulty] = useState(Difficulty.Easy);
+  const [questionType, setQuestionType] = useState(Type.Coding);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,6 +44,14 @@ function App() {
     type: string
   ) => {
     try {
+      if (useDefaultQuestion) {
+        setQuestion(Defaults.question);
+        setAnswer(Defaults.answer);
+        setQuestionCategory(Defaults.category);
+        setQuestionDifficulty(Defaults.difficulty);
+        setQuestionType(Defaults.type);
+      }
+
       setIsLoading(true);
       const request = await axios.get(
         "http://127.0.0.1:5000/generate_question",
@@ -48,10 +70,20 @@ function App() {
       const response = await request;
       let jsonData = response.data;
       if (typeof response.data === "string") {
-        jsonData = JSON.parse(response.data);
+        try {
+          jsonData = JSON.parse(response.data);
+        } catch {
+          setQuestion(response.data);
+          setAnswer(response.data);
+        }
+      } else {
+        setQuestion(jsonData.question);
+        setAnswer(jsonData.answer);
       }
-      setQuestion(jsonData.question);
-      setAnswer(jsonData.answer);
+
+      setQuestionCategory(getCategoryFromString(category));
+      setQuestionDifficulty(getDifficultyFromString(difficulty));
+      setQuestionType(getTypeFromString(type));
     } catch (err: unknown) {
       if (err instanceof CanceledError) return;
       if (err instanceof Error) setError(err.message);
@@ -62,11 +94,11 @@ function App() {
 
   const questionOptions: IQuestionInterface = {
     categoryLabel: "Categories",
-    categoryOptions: ["Python", "JavaScript", "React", "C#"],
+    categoryOptions: Object.values(Category) as string[],
     difficultyLabel: "Difficulty",
-    difficultyOptions: ["Easy", "Intermediate", "Hard"],
+    difficultyOptions: Object.values(Difficulty) as string[],
     typeLabel: "Type",
-    typeOptions: ["Coding", "Theoretical"],
+    typeOptions: Object.values(Type) as string[],
   };
 
   return (
@@ -86,6 +118,9 @@ function App() {
             title="New Question"
             question={question}
             answer={answer}
+            questionCategory={questionCategory}
+            questionDifficulty={questionDifficulty}
+            questionType={questionType}
           ></QuestionContainer>
         </Col>
       </Row>

@@ -7,7 +7,7 @@
         {
             "type": "firefox",
             "request": "launch",
-            "name": "Launch index.html",
+            "name": "Launch frontend",
             "url": "http://localhost:5173",
             "pathMappings": [
                 {
@@ -15,6 +15,13 @@
                     "path": "${workspaceFolder}/frontend/src"
                 }
             ]
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "name": "Launch backend",
+            "url": "http://127.0.0.1:5000",
+
         }
     ]
 }

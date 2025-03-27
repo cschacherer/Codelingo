@@ -1,17 +1,28 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
 import "./QuestionContainer.css";
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
+import CodeEditor from "../CodeEditor/CodeEditor";
+import { Category, Difficulty, Type } from "../../enumOptions";
 
 interface Props {
   title: string;
   question: string;
   answer: string;
+  questionCategory: Category;
+  questionDifficulty: Difficulty;
+  questionType: Type;
 }
 
-const QuestionContainer = ({ title, question, answer }: Props) => {
+const QuestionContainer = ({
+  title,
+  question,
+  answer,
+  questionCategory,
+  questionDifficulty,
+  questionType,
+}: Props) => {
   const [userAnswer, setUserAnswer] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
 
@@ -40,17 +51,24 @@ const QuestionContainer = ({ title, question, answer }: Props) => {
       </div>
 
       <div className="defaultMargins">
-        <Form.Group>
-          <Form.Label className="text-sm-right" id="yourAnswerLabel">
-            Your answer
-          </Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={8}
-            onChange={handleUserAnswerChange}
-            value={userAnswer}
-          ></Form.Control>
-        </Form.Group>
+        {questionType === Type.Coding ? (
+          <div>
+            <h4>Your Answer: {questionCategory} Coding Editor</h4>
+            <CodeEditor questionCategory={questionCategory}></CodeEditor>
+          </div>
+        ) : (
+          <Form.Group>
+            <Form.Label className="text-sm-right" id="yourAnswerLabel">
+              Your answer
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={8}
+              onChange={handleUserAnswerChange}
+              value={userAnswer}
+            ></Form.Control>
+          </Form.Group>
+        )}
 
         <Button
           variant="light"
