@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { Category, Difficulty, Type } from "../../enumOptions";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   title: string;
@@ -26,10 +27,33 @@ const QuestionContainer = ({
   const [userAnswer, setUserAnswer] = useState("");
   const [showAnswer, setShowAnswer] = useState(false);
 
+  const [formattedQuestion, setFormattedQuestion] = useState("");
+  const [formattedAnswer, setFormattedAnswer] = useState("");
+
   useEffect(() => {
     setUserAnswer("");
     setShowAnswer(false);
-  }, [question]);
+
+    let correctNewLineQuestion = question;
+    if (answer.includes("\r\n")) {
+      correctNewLineQuestion = question.replace(/\r?\n/g, "  \n");
+    } else if (question.includes("\n")) {
+      correctNewLineQuestion = question.replace(/\n/g, "  \n");
+    } else if (question.includes("\\n")) {
+      correctNewLineQuestion = question.replace(/\\n/g, "  \n");
+    }
+    setFormattedQuestion(`\`\`\`  \n${correctNewLineQuestion}  \n \`\`\``);
+
+    let correctNewLineAnswer = answer;
+    if (answer.includes("\r\n")) {
+      correctNewLineAnswer = answer.replace(/\r?\n/g, "  \n");
+    } else if (answer.includes("\n")) {
+      correctNewLineAnswer = answer.replace(/\n/g, "  \n");
+    } else if (answer.includes("\\n")) {
+      correctNewLineAnswer = answer.replace(/\\n/g, "  \n");
+    }
+    setFormattedAnswer(`\`\`\`  \n${correctNewLineAnswer}  \n \`\`\``);
+  }, [question, answer]);
 
   const handleShowAnswerClicked = () => {
     setShowAnswer(!showAnswer);
@@ -45,8 +69,8 @@ const QuestionContainer = ({
     <Container fluid>
       <div>
         <h1 className="questionHeader defaultMargins">{title}</h1>
-        <pre className="defaultLRPadding" id="questionText">
-          {question}
+        <pre className="display-linebreak defaultLRPadding" id="questionText">
+          {formattedQuestion}
         </pre>
       </div>
 
@@ -54,7 +78,10 @@ const QuestionContainer = ({
         {questionType === Type.Coding ? (
           <div>
             <h4>Your Answer: {questionCategory} Coding Editor</h4>
-            <CodeEditor questionCategory={questionCategory}></CodeEditor>
+            <CodeEditor
+              questionCategory={questionCategory}
+              answerText={userAnswer}
+            ></CodeEditor>
           </div>
         ) : (
           <Form.Group>
@@ -83,8 +110,9 @@ const QuestionContainer = ({
       {showAnswer && (
         <div className="border defaultMargins">
           <h1 className="answerHeader defaultMargins">Answer</h1>
-          <pre className="defaultLRPadding" id="answerText">
-            {answer}
+          <pre className="display-linebreak defaultLRPadding" id="answerText">
+            {/* {formattedAnswer} */}
+            <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
           </pre>
         </div>
       )}

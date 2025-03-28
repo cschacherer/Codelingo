@@ -11,7 +11,7 @@ from flask_cors import CORS
 app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
 CORS(app)
 
-useOpenAI = True
+useOpenAI = False
 if(useOpenAI): 
     communicator = openAI_LLM()
 else:
@@ -37,8 +37,8 @@ def login():
 def homePage():
     #return send_from_directory(app.static_folder, "index.html")
     category = "Python"
-    difficulty = "Easy"
-    type = "Theoretical"
+    difficulty = "Hard"
+    type = "Coding"
     response = communicator.generateQuestion(category, difficulty, type)
     return response
 

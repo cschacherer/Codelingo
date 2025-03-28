@@ -21,13 +21,20 @@ import {
   bracketMatching,
   foldKeymap,
 } from "@codemirror/language";
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import {
+  defaultKeymap,
+  history,
+  historyKeymap,
+  indentWithTab,
+  insertTab,
+} from "@codemirror/commands";
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 import {
   autocompletion,
   completionKeymap,
   closeBrackets,
   closeBracketsKeymap,
+  acceptCompletion,
 } from "@codemirror/autocomplete";
 import { lintKeymap } from "@codemirror/lint";
 import { Category } from "../../enumOptions";
@@ -45,9 +52,10 @@ import { vue } from "@codemirror/lang-vue";
 
 interface Props {
   questionCategory: Category;
+  answerText: string;
 }
 
-const CodeEditor = ({ questionCategory }: Props) => {
+const CodeEditor = ({ questionCategory, answerText }: Props) => {
   const editorRef = useRef(null);
   const viewRef = useRef<EditorView>(null);
 
@@ -80,6 +88,7 @@ const CodeEditor = ({ questionCategory }: Props) => {
       extensions: [
         basicSetup,
         language.of(setLanguage(questionCategory)), //empty default language
+        keymap.of([{ key: "Tab", run: acceptCompletion }]),
         // A line number gutter
         lineNumbers(),
         // A gutter with code folding markers
@@ -148,16 +157,23 @@ const CodeEditor = ({ questionCategory }: Props) => {
       parent: editorRef.current,
     });
 
-    // function changeLanguage(questionCategory: string) {
-    //   viewRef.current?.dispatch({
-    //     effects: language.reconfigure(setLanguage(questionCategory)),
-    //   });
-    // }
-
     return () => {
       viewRef.current?.destroy();
     };
-  }, []);
+  }, [questionCategory]);
+
+  //clear text
+  useEffect(() => {
+    if (viewRef.current) {
+      viewRef.current.dispatch({
+        changes: {
+          from: 0,
+          to: viewRef.current.state.doc.length,
+          insert: "",
+        },
+      });
+    }
+  }, [answerText]);
 
   return <div ref={editorRef} className="codemirror-container"></div>;
 };

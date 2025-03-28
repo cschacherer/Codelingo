@@ -3,6 +3,7 @@ import Dropdown from "../Dropdown/Dropdown";
 import IQuestionOptions from "../IQuestionOptions";
 import "./GeneratePanel.css";
 import { useState, useEffect } from "react";
+import { Category, Difficulty, Type } from "../../enumOptions";
 
 interface Props {
   options: IQuestionOptions;
@@ -11,21 +12,25 @@ interface Props {
 }
 
 const GeneratePanel = ({ options, handleOnClick, loading }: Props) => {
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedDifficulty, setSelectedDifficulty] = useState("");
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(
+    Category.Python.toString()
+  );
+  const [selectedDifficulty, setSelectedDifficulty] = useState(
+    Difficulty.Easy.toString()
+  );
+  const [selectedType, setSelectedType] = useState(Type.Coding.toString());
 
-  useEffect(() => {
-    if (options.categoryOptions.length >= 1) {
-      setSelectedCategory(options.categoryOptions[0]);
-    }
-    if (options.difficultyOptions.length >= 1) {
-      setSelectedDifficulty(options.difficultyOptions[0]);
-    }
-    if (options.typeOptions.length >= 1) {
-      setSelectedType(options.typeOptions[0]);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (options.categoryOptions.length >= 1) {
+  //     setSelectedCategory(options.categoryOptions[0]);
+  //   }
+  //   if (options.difficultyOptions.length >= 1) {
+  //     setSelectedDifficulty(options.difficultyOptions[0]);
+  //   }
+  //   if (options.typeOptions.length >= 1) {
+  //     setSelectedType(options.typeOptions[0]);
+  //   }
+  // }, []);
 
   return (
     <div className="container verticalFlex">

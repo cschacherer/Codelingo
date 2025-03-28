@@ -15,7 +15,9 @@ class openAI_LLM():
             if (type.lower() == "theoretical"): 
                 typeMsg = "Create this question so that the answer is theoretical, do not use a question where the user will need to write code."
 
-            separateMsg = "Format the response into one json object.  Use the json key 'question' for the question section and the json key 'answer' for the answer section.  Make sure the question section and answer section can be parsed from a string to a JSON object. Only return the json object, do not add any characters before or after it."
+            # separateMsg = "Format the response into one json object.  Use the json key 'question' for the question section and the json key 'answer' for the answer section.  Make sure the question section and answer section can be parsed from a string to a JSON object. Only return the json object, do not add any characters before or after it."
+            separateMsg = "Return only a JSON object with no commentary in the following format {Question: VALUE, Answer: VALUE}"
+
             completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", 
                 messages= [

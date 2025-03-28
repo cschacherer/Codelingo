@@ -34,9 +34,16 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    generateQuestionFunction;
-  }, []);
+  type QAResponseObject = Record<string, string>;
+
+  const normalizeKeys = (obj: QAResponseObject): QAResponseObject => {
+    const normalized: QAResponseObject = {};
+    Object.keys(obj).forEach((key) => {
+      const cleanKey = key.replace(/['"]+/g, "").toLowerCase(); // Remove quotes and normalize case
+      normalized[cleanKey] = obj[key];
+    });
+    return normalized;
+  };
 
   const generateQuestionFunction = async (
     category: string,
@@ -50,6 +57,7 @@ function App() {
         setQuestionCategory(Defaults.category);
         setQuestionDifficulty(Defaults.difficulty);
         setQuestionType(Defaults.type);
+        return;
       }
 
       setIsLoading(true);
@@ -69,17 +77,117 @@ function App() {
       );
       const response = await request;
       let jsonData = response.data;
-      if (typeof response.data === "string") {
-        try {
-          jsonData = JSON.parse(response.data);
-        } catch {
-          setQuestion(response.data);
-          setAnswer(response.data);
-        }
-      } else {
-        setQuestion(jsonData.question);
-        setAnswer(jsonData.answer);
+
+      try {
+        let parsedJSONData = JSON.parse(jsonData);
+
+        // let jsonKeys = Object.keys(parsedJSONData);
+
+        // for (let key in jsonKeys) {
+        //   if (key.toString().toLowerCase() === "question") {
+        //     setQuestion(`${parsedJSONData[key]}`);
+        //   } else if (key.toString().toLowerCase() === "answer") {
+        //     setAnswer(`${parsedJSONData[key]}`);
+        //   }
+        // }
+
+        // setQuestion(
+        //   `\`\`\ ${
+        //     parsedJSONData.question ||
+        //     parsedJSONData.Question ||
+        //     parsedJSONData.QUESTION ||
+        //     "PARSING ERROR"
+        //   }\`\`\``
+        // );
+
+        // setAnswer(
+        //   `\`\`\` \n ${
+        //     parsedJSONData.answer ||
+        //     parsedJSONData.Answer ||
+        //     parsedJSONData.Answer ||
+        //     "PARSING ERROR"
+        //   } \n \`\`\``
+        // );
+
+        setQuestion(
+          parsedJSONData.question ||
+            parsedJSONData.Question ||
+            parsedJSONData.QUESTION ||
+            "PARSING ERROR"
+        );
+
+        setAnswer(
+          parsedJSONData.answer ||
+            parsedJSONData.Answer ||
+            parsedJSONData.Answer ||
+            "PARSING ERROR"
+        );
+      } catch (e: any) {
+        setQuestion(jsonData);
+        setAnswer(jsonData);
       }
+
+      // let escapedJSONString: string = JSON.stringify(response.data); //makes sure all characters are properly escaped for formatting
+
+      // setQuestion(escapedJSONString);
+      // setAnswer(escapedJSONString);
+
+      // let parsedJSONData = JSON.parse(jsonData);
+      // setQuestion(
+      //   `${
+      //     parsedJSONData.question ||
+      //     parsedJSONData.Question ||
+      //     parsedJSONData.QUESTION ||
+      //     "PARSING ERROR"
+      //   }`
+      // );
+
+      // setAnswer(
+      //   `${
+      //     parsedJSONData.answer ||
+      //     parsedJSONData.Answer ||
+      //     parsedJSONData.Answer ||
+      //     "PARSING ERROR"
+      //   }`
+      // );
+
+      // try {
+      //   let parsedJSONData = JSON.parse(jsonData);
+      //   let keyValues = Object.keys(parsedJSONData);
+      // } catch (e: any) {
+      //   setQuestion(response.data);
+      //   setAnswer(response.data);
+      // }
+      // let parsedJSONData = JSON.parse(jsonData);
+      // let keyValues = Object.keys(parsedJSONData);
+
+      // let escapedJSONString: string = JSON.stringify(response.data); //makes sure all characters are properly escaped for formatting
+      // escapedJSONString = escapedJSONString.replace("```", "```");
+
+      // let keyValues2 = Object.keys(jsonData);
+
+      // for (const k in Object.keys(parsedJSONData)) {
+      //   if (k.toString().toLowerCase() === "question") {
+      //     setQuestion(parsedJSONData[k].toString());
+      //   } else if (k.toString().toLowerCase() === "answer") {
+      //     setAnswer(parsedJSONData[k].toString());
+      //   }
+      // }
+
+      // if (typeof response.data === "string") {
+      //   try {
+      //     console.log("Is string.");
+      //     jsonData = JSON.parse(x);
+      //     let z = jsonData.Question;
+      //   } catch (e: any) {
+      //     console.log(e.message);
+      //     setQuestion(response.data);
+      //     setAnswer(response.data);
+      //   }
+      // } else {
+      //   setQuestion(normalizedData.question);
+      //   setAnswer(normalizedData.answer);
+      // }
 
       setQuestionCategory(getCategoryFromString(category));
       setQuestionDifficulty(getDifficultyFromString(difficulty));
@@ -100,6 +208,14 @@ function App() {
     typeLabel: "Type",
     typeOptions: Object.values(Type) as string[],
   };
+
+  useEffect(() => {
+    generateQuestionFunction(
+      questionCategory,
+      questionDifficulty,
+      questionType
+    );
+  }, []);
 
   return (
     <Container id="mainContainer">

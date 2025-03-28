@@ -27,7 +27,7 @@
     color: black;
     overflow-x: auto;
     font-size: medium;
-    white-space: pre-wrap;
+    white-space: pre-wrap; 
 }
 
 #yourAnswerLabel {
