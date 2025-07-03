@@ -21,7 +21,7 @@ import {
 } from "./enumOptions";
 
 function App() {
-  let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
+  let useDefaultQuestion = true; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -33,17 +33,6 @@ function App() {
   const [questionType, setQuestionType] = useState(Type.Coding);
 
   const [isLoading, setIsLoading] = useState(false);
-
-  type QAResponseObject = Record<string, string>;
-
-  const normalizeKeys = (obj: QAResponseObject): QAResponseObject => {
-    const normalized: QAResponseObject = {};
-    Object.keys(obj).forEach((key) => {
-      const cleanKey = key.replace(/['"]+/g, "").toLowerCase(); // Remove quotes and normalize case
-      normalized[cleanKey] = obj[key];
-    });
-    return normalized;
-  };
 
   const generateQuestionFunction = async (
     category: string,
@@ -81,34 +70,6 @@ function App() {
       try {
         let parsedJSONData = JSON.parse(jsonData);
 
-        // let jsonKeys = Object.keys(parsedJSONData);
-
-        // for (let key in jsonKeys) {
-        //   if (key.toString().toLowerCase() === "question") {
-        //     setQuestion(`${parsedJSONData[key]}`);
-        //   } else if (key.toString().toLowerCase() === "answer") {
-        //     setAnswer(`${parsedJSONData[key]}`);
-        //   }
-        // }
-
-        // setQuestion(
-        //   `\`\`\ ${
-        //     parsedJSONData.question ||
-        //     parsedJSONData.Question ||
-        //     parsedJSONData.QUESTION ||
-        //     "PARSING ERROR"
-        //   }\`\`\``
-        // );
-
-        // setAnswer(
-        //   `\`\`\` \n ${
-        //     parsedJSONData.answer ||
-        //     parsedJSONData.Answer ||
-        //     parsedJSONData.Answer ||
-        //     "PARSING ERROR"
-        //   } \n \`\`\``
-        // );
-
         setQuestion(
           parsedJSONData.question ||
             parsedJSONData.Question ||
@@ -126,68 +87,6 @@ function App() {
         setQuestion(jsonData);
         setAnswer(jsonData);
       }
-
-      // let escapedJSONString: string = JSON.stringify(response.data); //makes sure all characters are properly escaped for formatting
-
-      // setQuestion(escapedJSONString);
-      // setAnswer(escapedJSONString);
-
-      // let parsedJSONData = JSON.parse(jsonData);
-      // setQuestion(
-      //   `${
-      //     parsedJSONData.question ||
-      //     parsedJSONData.Question ||
-      //     parsedJSONData.QUESTION ||
-      //     "PARSING ERROR"
-      //   }`
-      // );
-
-      // setAnswer(
-      //   `${
-      //     parsedJSONData.answer ||
-      //     parsedJSONData.Answer ||
-      //     parsedJSONData.Answer ||
-      //     "PARSING ERROR"
-      //   }`
-      // );
-
-      // try {
-      //   let parsedJSONData = JSON.parse(jsonData);
-      //   let keyValues = Object.keys(parsedJSONData);
-      // } catch (e: any) {
-      //   setQuestion(response.data);
-      //   setAnswer(response.data);
-      // }
-      // let parsedJSONData = JSON.parse(jsonData);
-      // let keyValues = Object.keys(parsedJSONData);
-
-      // let escapedJSONString: string = JSON.stringify(response.data); //makes sure all characters are properly escaped for formatting
-      // escapedJSONString = escapedJSONString.replace("```", "```");
-
-      // let keyValues2 = Object.keys(jsonData);
-
-      // for (const k in Object.keys(parsedJSONData)) {
-      //   if (k.toString().toLowerCase() === "question") {
-      //     setQuestion(parsedJSONData[k].toString());
-      //   } else if (k.toString().toLowerCase() === "answer") {
-      //     setAnswer(parsedJSONData[k].toString());
-      //   }
-      // }
-
-      // if (typeof response.data === "string") {
-      //   try {
-      //     console.log("Is string.");
-      //     jsonData = JSON.parse(x);
-      //     let z = jsonData.Question;
-      //   } catch (e: any) {
-      //     console.log(e.message);
-      //     setQuestion(response.data);
-      //     setAnswer(response.data);
-      //   }
-      // } else {
-      //   setQuestion(normalizedData.question);
-      //   setAnswer(normalizedData.answer);
-      // }
 
       setQuestionCategory(getCategoryFromString(category));
       setQuestionDifficulty(getDifficultyFromString(difficulty));

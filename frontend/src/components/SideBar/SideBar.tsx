@@ -12,9 +12,13 @@ interface Props {
 
 const SideBar = ({ name, icon, options, handleOnClick, loading }: Props) => {
   return (
-    <div className="container sideBarBackground verticalFlex">
-      <div className="container verticalFlex ">
-        <h1 className="titleText">{name}</h1>
+    <div className="container sideBarBackground">
+      <div className="container verticalFlex" id="mainGroup">
+        <h1>
+          <a href="/" id="titleText">
+            {name}
+          </a>
+        </h1>
         <img className="icon iconSize" src={icon} />
         <GeneratePanel
           options={options}

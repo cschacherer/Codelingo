@@ -1,5 +1,6 @@
 import os
 from openai import OpenAI
+import json 
 
 class openAI_LLM(): 
 
@@ -14,9 +15,14 @@ class openAI_LLM():
                 typeMsg = "Create this question so the user has to write code for the answer.  Send back any code written in a readable format."
             if (type.lower() == "theoretical"): 
                 typeMsg = "Create this question so that the answer is theoretical, do not use a question where the user will need to write code."
-
-            # separateMsg = "Format the response into one json object.  Use the json key 'question' for the question section and the json key 'answer' for the answer section.  Make sure the question section and answer section can be parsed from a string to a JSON object. Only return the json object, do not add any characters before or after it."
-            separateMsg = "Return only a JSON object with no commentary in the following format {Question: VALUE, Answer: VALUE}"
+                
+            separateMsg = (
+            "Respond with a **valid JSON object only**, with no additional text, formatting, or markdown. "
+            "Your response must be **EXACTLY** in this format: "
+            '{"question": "VALID_JSON_STRING", "answer": "VALID_JSON_STRING"}. '
+            "Ensure both `Question` and `Answer` values are valid **escaped** JSON strings. "
+            "Do not include markdown, explanations, code fences, or any additional text."
+        )
 
             completion = self.client.chat.completions.create(
                 model="gpt-3.5-turbo", 
@@ -25,7 +31,9 @@ class openAI_LLM():
                     {"role": "user", "content": f"Write a coding interview question to test a user's {subject} skills.  The difficulty of this question should be {difficulty}. {typeMsg}. {separateMsg}"}
                 ] 
             )  
-            return completion.choices[0].message.content
+
+            jsonString = json.dumps(completion.choices[0].message.content)
+            return jsonString
 
         except Exception as e: 
             return "Error generating question using OpenAI. " + repr(e); 
