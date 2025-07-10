@@ -9,11 +9,11 @@ class DatabaseSeeder():
         userRecords = User.query.all()
         if len(userRecords) == 0: 
             users = [
-                User(username="admin", password="admin123"),
-                User(username="guest", password="guest123"),
-                User(username="alice", password="alicePass"),
-                User(username="bob", password="bobPass"),
-                User(username="carly", password="carlyPass"),
+                User(username="admin", plainTextPassword="admin123"),
+                User(username="guest", plainTextPassword="guest123"),
+                User(username="alice", plainTextPassword="alicePass"),
+                User(username="bob", plainTextPassword="bobPass"),
+                User(username="carly", plainTextPassword="carlyPass"),
             ]
             db.session.add_all(users)
             db.session.commit()

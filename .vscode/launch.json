@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug test_api.py",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/functional/test_api.py"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}/backend"
+        },
+        {
             "type": "firefox",
             "request": "launch",
             "name": "Launch frontend",
