@@ -19,6 +19,7 @@ import os
 def createApp(testing = False): 
 
     app = Flask(__name__)
+    CORS(app)
 
     app.config.from_object(Config)
 
@@ -77,12 +78,13 @@ def createApp(testing = False):
         category = data.get('category')
         difficulty = data.get('difficulty')
         type = data.get('type')
-        response = communicator.generateQuestion(category, difficulty, type)
+        newQuestion = communicator.generateQuestion(category, difficulty, type)
+        jsonNewQuestion = json.loads(newQuestion) 
         return jsonify({
             "category": category, 
             "difficulty": difficulty, 
             "type": type, 
-            "question": response
+            "question": jsonNewQuestion
         }), 200
 
     @app.route('/login', methods=['POST'])

@@ -21,12 +21,10 @@ import {
 } from "./enumOptions";
 
 function App() {
-  let useDefaultQuestion = true; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
+  let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-
-  const [error, setError] = useState("");
 
   const [questionCategory, setQuestionCategory] = useState(Category.Python);
   const [questionDifficulty, setQuestionDifficulty] = useState(Difficulty.Easy);
@@ -50,17 +48,18 @@ function App() {
       }
 
       setIsLoading(true);
-      const request = await axios.get(
+      const jsonBody = {
+        category: category,
+        difficulty: difficulty,
+        type: type,
+      };
+      const request = await axios.post(
         "http://127.0.0.1:5000/generate_question",
+        jsonBody,
         {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "*",
-          },
-          params: {
-            category: category,
-            difficulty: difficulty,
-            type: type,
           },
         }
       );
@@ -68,7 +67,7 @@ function App() {
       let jsonData = response.data;
 
       try {
-        let parsedJSONData = JSON.parse(jsonData);
+        let parsedJSONData = JSON.parse(jsonData.question);
 
         setQuestion(
           parsedJSONData.question ||
@@ -91,9 +90,11 @@ function App() {
       setQuestionCategory(getCategoryFromString(category));
       setQuestionDifficulty(getDifficultyFromString(difficulty));
       setQuestionType(getTypeFromString(type));
-    } catch (err: unknown) {
+    } catch (err) {
       if (err instanceof CanceledError) return;
-      if (err instanceof Error) setError(err.message);
+      if (err instanceof Error) {
+        console.log(err.message + " " + err.stack);
+      }
     } finally {
       setIsLoading(false);
     }

@@ -28,10 +28,37 @@
             ]
         },
         {
+            "name": "Debug backend",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/app.py",
+            "cwd": "${workspaceFolder}/backend"
+        },
+        {
             "type": "firefox",
             "request": "launch",
-            "name": "Launch backend",
-            "url": "http://127.0.0.1:5000",
+            "name": "Launch frontend in firefox",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:5173/src",
+                    "path": "${workspaceFolder}/frontend/src"
+                }
+            ],
+        },
+        {
+            "type": "firefox",
+            "request": "launch",
+            "name": "Launch frontend in chrome",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/frontend/src",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:5173/src",
+                    "path": "${workspaceFolder}/frontend/src"
+                }
+            ],
         }
     ]
 }
