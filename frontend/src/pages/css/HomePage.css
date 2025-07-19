@@ -1,0 +1,45 @@
+#mainContainer {
+    max-width: 100%;
+    margin: 0 auto;
+    flex-wrap: nowrap;
+}
+
+.noPadding {
+    padding: 0 !important;
+
+}
+
+.sideBarContainer {
+    background: linear-gradient(#21d4fc, #a238fe);
+}
+
+.questionBackground {
+    background: #ffffff;
+    display: flex;
+    width: 100%;
+    min-width: 200px;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+    flex-wrap: nowrap;
+}
+
+.titleText {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 70px;
+    flex: 1;
+    margin: 5;
+    flex-shrink: 1;
+}
+
+#sideWidth {
+    width: 450px;
+    min-width: 450px;
+    max-width: 450px;
+}
