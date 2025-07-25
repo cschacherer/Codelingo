@@ -13,7 +13,7 @@ body {
     height: 100%;
     width: 100%;
     place-items: center;
-    background: #f2f2f2;
+    background: #fff9f9;
     /* background: linear-gradient(#21d4fc, #a238fe); */
 }
 
@@ -150,4 +150,10 @@ form .signup-link a {
 form .pass-link a:hover,
 form .signup-link a:hover {
     text-decoration: underline;
+}
+
+form .error {
+    color: #bb0000;
+    margin: 20px;
+    text-align: center;
 }

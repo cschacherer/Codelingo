@@ -101,10 +101,10 @@ def createApp(testing = False):
                 login_user(user)
                 return jsonify({"msg": "Logged in user"}), 200
             else:
-                return jsonify({"msg": "Wrong password"}), 400
+                return jsonify({"msg": "Invalid password"}), 401
+        else: 
+            return jsonify({"msg": "That username does not exist."}), 401
         
-        return jsonify({"msg": "No user with that username exists"}), 404
-
     @app.route('/logout', methods=['POST'])
     @login_required
     def logout():
@@ -127,6 +127,7 @@ def createApp(testing = False):
         return jsonify({"msg": "Registered user"}), 200
 
     @app.route('/users', methods=['GET'])
+    @login_required
     def getUsers():
         users = User.query.all()
         if len(users) == 0: 
@@ -134,13 +135,15 @@ def createApp(testing = False):
         return jsonify(users), 200
 
     @app.route('/users/<username>', methods=['GET'])
+    @login_required
     def getUser(username): 
         user = User.query.filter_by(username=username).first()
         if not user: 
             return jsonify({"msg": "User not found"}), 404
         return jsonify(user), 200
 
-    @app.route('/users/<username>', methods=['PATCH'])
+    @app.route('/users/<username>', methods=['PATCH'])   
+    @login_required
     def updateUser(username): 
         data = request.get_json()
         newUsername = data.get("username")
@@ -158,6 +161,7 @@ def createApp(testing = False):
         return jsonify(user), 200
 
     @app.route('/users/<username>', methods=['DELETE'])
+    @login_required
     def deleteUser(username): 
         if(username == None): 
             return jsonify({"msg": "Username cannot be missing"}), 400
@@ -189,6 +193,7 @@ def createApp(testing = False):
 
 
     @app.route('/users/<username>/questions/<questionId>', methods=['GET'])
+    @login_required
     def loadQuestion(username, questionId): 
         data = request.get_json()
         question = SavedQuestion.query.filter_by(userId=username, id=questionId).first()
