@@ -2,10 +2,11 @@ import axios from "axios";
 import "./css/LoginAndRegister.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../services/apiClient";
 
 const LoginPage = () => {
-    const [usernameText, setUsernameText] = useState("A");
-    const [passwordText, setPasswordText] = useState("A");
+    const [usernameText, setUsernameText] = useState("admin");
+    const [passwordText, setPasswordText] = useState("admin123");
     const [errorText, setErrorText] = useState("");
 
     const navigate = useNavigate();
@@ -17,10 +18,7 @@ const LoginPage = () => {
         };
 
         try {
-            const response = await axios.post(
-                "http://127.0.0.1:5000/login",
-                jsonLogin
-            );
+            const response = await apiClient.post("/login", jsonLogin);
             if (response.status === 200) {
                 navigate(`/users/${usernameText}`);
             } else if (response.status === 401) {

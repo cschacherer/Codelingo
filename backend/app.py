@@ -19,7 +19,7 @@ import os
 def createApp(testing = False): 
 
     app = Flask(__name__)
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     app.config.from_object(Config)
 
@@ -38,7 +38,12 @@ def createApp(testing = False):
 
     loginManager = LoginManager()
     loginManager.init_app(app)
-    loginManager.login_view = "login"
+    loginManager.login_view = "login" 
+
+    
+    @loginManager.unauthorized_handler
+    def unauthorized():
+        return jsonify({"msg": "Unauthorized"}), 401
         
     useOpenAI = False
     if(useOpenAI): 
@@ -101,9 +106,9 @@ def createApp(testing = False):
                 login_user(user)
                 return jsonify({"msg": "Logged in user"}), 200
             else:
-                return jsonify({"msg": "Invalid password"}), 401
+                return jsonify({"msg": "Invalid username or password"}), 401
         else: 
-            return jsonify({"msg": "That username does not exist."}), 401
+            return jsonify({"msg": "Invalid username or password"}), 401
         
     @app.route('/logout', methods=['POST'])
     @login_required
@@ -140,7 +145,12 @@ def createApp(testing = False):
         user = User.query.filter_by(username=username).first()
         if not user: 
             return jsonify({"msg": "User not found"}), 404
-        return jsonify(user), 200
+        questions = SavedQuestion.query.filter_by(userId=user.id); 
+        userData = {
+            "username": user.username, 
+        }
+        
+        return jsonify(userData), 200
 
     @app.route('/users/<username>', methods=['PATCH'])   
     @login_required
