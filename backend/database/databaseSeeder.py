@@ -25,7 +25,7 @@ class DatabaseSeeder():
                 SavedQuestion(category='Python', difficulty='Hard', type='Theoretical', question='python hard question', answer='correct chatgpt answer', 
                            userAnswer='user answer', notes='this is a note', userId=1), 
                 SavedQuestion(category='Java', difficulty='Easy', type='Theoretical', question='java easy question', answer='correct chatgpt answer', 
-                           userAnswer='user answer', notes='this is a note for question 2', userId=2),
+                           userAnswer='user answer', notes='this is a note for question 2', userId=1),
             ]
                 
             db.session.add_all(questions)

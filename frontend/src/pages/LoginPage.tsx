@@ -3,6 +3,7 @@ import "./css/LoginAndRegister.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../services/apiClient";
+import { getErrorMessage } from "../helpers/utils";
 
 const LoginPage = () => {
     const [usernameText, setUsernameText] = useState("admin");
@@ -24,11 +25,12 @@ const LoginPage = () => {
             } else if (response.status === 401) {
                 setErrorText("You're username or password were incorrect.");
             }
-        } catch (e) {
-            if (axios.isAxiosError(e) && e.response?.status === 401) {
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
                 setErrorText("You're username or password were incorrect.");
             } else {
-                setErrorText("Error logging in. " + (e as Error).message);
+                let msg = getErrorMessage(error);
+                setErrorText(`Error logging in. ${msg}`);
             }
             setUsernameText("");
             setPasswordText("");

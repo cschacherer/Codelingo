@@ -43,7 +43,7 @@ def createApp(testing = False):
     
     @loginManager.unauthorized_handler
     def unauthorized():
-        return jsonify({"msg": "Unauthorized"}), 401
+        return jsonify({"message": "Unauthorized"}), 401
         
     useOpenAI = False
     if(useOpenAI): 
@@ -59,7 +59,7 @@ def createApp(testing = False):
     @app.route('/dashboard', methods=['GET', 'POST'])
     @login_required
     def dashboard(): 
-        return jsonify({"msg": "this is your dashboard"}), 200
+        return jsonify({"message": "this is your dashboard"}), 200
 
     # The route() function of the Flask class is a decorator, 
     # which tells the application which URL should call 
@@ -98,23 +98,23 @@ def createApp(testing = False):
         username = data.get('username')
         password = data.get('password')
         if(username == None or password == None): 
-            return jsonify({"msg": "Username or password cannot be missing"}), 400
+            return jsonify({"message": "Username or password cannot be missing"}), 400
 
         user = User.query.filter_by(username=username).first()
         if user: 
             if user.checkPassword(password):
                 login_user(user)
-                return jsonify({"msg": "Logged in user"}), 200
+                return jsonify({"message": "Logged in user"}), 200
             else:
-                return jsonify({"msg": "Invalid username or password"}), 401
+                return jsonify({"message": "Invalid username or password"}), 401
         else: 
-            return jsonify({"msg": "Invalid username or password"}), 401
+            return jsonify({"message": "Invalid username or password"}), 401
         
     @app.route('/logout', methods=['POST'])
     @login_required
     def logout():
         logout_user()
-        return {"msg": "Logged out user"}, 200   
+        return {"message": "Logged out user"}, 200   
         
     @app.route('/register', methods=['POST'])
     def register():
@@ -122,21 +122,21 @@ def createApp(testing = False):
         username = data.get('username')
         password = data.get('password')
         if(username == None or password == None): 
-            return jsonify({"msg": "Username or password cannot be missing"}), 400
+            return jsonify({"message": "Username or password cannot be missing"}), 400
         existingUser = User.query.filter_by(username=username).first()
         if existingUser: 
-            return jsonify({"msg": "User with that username already exists"}), 400
+            return jsonify({"message": "User with that username already exists"}), 400
         user = User(username=username, plainTextPassword=password)
         db.session.add(user)
         db.session.commit()
-        return jsonify({"msg": "Registered user"}), 200
+        return jsonify({"message": "Registered user"}), 200
 
     @app.route('/users', methods=['GET'])
     @login_required
     def getUsers():
         users = User.query.all()
         if len(users) == 0: 
-            return jsonify({"msg": "No users found"}), 404
+            return jsonify({"message": "No users found"}), 404
         return jsonify(users), 200
 
     @app.route('/users/<username>', methods=['GET'])
@@ -144,10 +144,24 @@ def createApp(testing = False):
     def getUser(username): 
         user = User.query.filter_by(username=username).first()
         if not user: 
-            return jsonify({"msg": "User not found"}), 404
+            return jsonify({"message": "User not found"}), 404
         questions = SavedQuestion.query.filter_by(userId=user.id); 
         userData = {
             "username": user.username, 
+            "savedQuestions": [
+                {
+                    "id": q.id, 
+                    "category": q.category, 
+                    "difficulty": q.difficulty,
+                    "type": q.type, 
+                    "question": q.question, 
+                    "answer": q.answer, 
+                    "userAnswer": q.userAnswer, 
+                    "notes": q.notes, 
+                    "userId": q.userId
+                }
+                for q in questions
+            ]
         }
         
         return jsonify(userData), 200
@@ -159,11 +173,11 @@ def createApp(testing = False):
         newUsername = data.get("username")
         newPassword = data.get("password")
         if(newUsername == None or newPassword == None): 
-            return jsonify({"msg": "Username or password cannot be missing"}), 400
+            return jsonify({"message": "Username or password cannot be missing"}), 400
         
         user = User.query.filter_by(username=username).first()
         if not user: 
-            return jsonify({"msg": "User not found"}), 404
+            return jsonify({"message": "User not found"}), 404
         
         user.username = newUsername
         user.password = newPassword
@@ -174,29 +188,33 @@ def createApp(testing = False):
     @login_required
     def deleteUser(username): 
         if(username == None): 
-            return jsonify({"msg": "Username cannot be missing"}), 400
+            return jsonify({"message": "Username cannot be missing"}), 400
         
         user = User.query.filter_by(username=username).first()
         if not user: 
-            return jsonify({"msg": "User not found"}), 404
+            return jsonify({"message": "User not found"}), 404
         
         db.session.delete(user)
         db.session.commit()
         newUsers = User.query.all()
         return jsonify(newUsers), 200
     
-    @app.route('/users/<username>/questions', methods=['POST'])
+    # @app.route('/users/<username>/questions', methods=['POST'])
+    @app.route('/savequestion', methods=['POST'])
     @login_required
-    def saveQuestion(username): 
+    def saveQuestion(): 
+        userId = current_user.id; 
         data = request.get_json()
-        question = SavedQuestion(data.get("category"), 
-                                data.get("difficulty"), 
-                                data.get("type"), 
-                                data.get("question"), 
-                                data.get("answer"), 
-                                data.get("userAnswer"), 
-                                data.get("notes"), 
-                                data.get("userId"))
+        cat = data.get("category")
+        question = SavedQuestion(
+            category=data.get("category"), 
+            difficulty=data.get("difficulty"), 
+            type=data.get("type"), 
+            question=data.get("question"), 
+            answer=data.get("answer"), 
+            userAnswer=data.get("userAnswer"), 
+            notes=data.get("notes"), 
+            userId=userId)
         db.session.add(question)
         db.session.commit()
         return jsonify(question), 201
@@ -208,7 +226,7 @@ def createApp(testing = False):
         data = request.get_json()
         question = SavedQuestion.query.filter_by(userId=username, id=questionId).first()
         if not question: 
-            return jsonify({"msg": f"Question for {username} was not found"}), 404
+            return jsonify({"message": f"Question for {username} was not found"}), 404
         return jsonify(question), 200
     
     return app

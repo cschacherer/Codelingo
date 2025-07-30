@@ -36,6 +36,12 @@
 
 #showAnswerButton {
     margin-top: 20px;
+    justify-self: left;
+}
+
+#saveQuestionButton {
+    margin-top: 20px;
+    justify-self: right;
 }
 
 .defaultLRPadding {
@@ -53,4 +59,9 @@
 code {
     white-space: pre-wrap !important;
     font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.buttonContainer {
+    display: grid;
+    grid-template-columns: 50% 50%;
 }
