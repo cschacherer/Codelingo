@@ -2,7 +2,6 @@
 // import IQuestionInterface from "../components/IQuestionOptions";
 // import { Defaults } from "../defaults";
 
-import { CanceledError } from "axios";
 import { useState, useEffect } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import QuestionContainer from "../components/QuestionContainer/QuestionContainer";
@@ -164,7 +163,6 @@ const HomePage = () => {
                         question={question}
                         answer={answer}
                         questionCategory={questionCategory}
-                        questionDifficulty={questionDifficulty}
                         questionType={questionType}
                         handleSaveQuestionClick={saveQuestionFunction}
                     ></QuestionContainer>

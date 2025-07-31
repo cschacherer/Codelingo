@@ -4,7 +4,7 @@ import "./QuestionContainer.css";
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
-import { Category, Difficulty, Type } from "../../helpers/enumOptions";
+import { Category, Type } from "../../helpers/enumOptions";
 import ReactMarkdown from "react-markdown";
 import NavBar from "../Navigation/NavBar";
 
@@ -13,7 +13,6 @@ interface Props {
     question: string;
     answer: string;
     questionCategory: Category;
-    questionDifficulty: Difficulty;
     questionType: Type;
     handleSaveQuestionClick: () => void;
 }
@@ -23,7 +22,6 @@ const QuestionContainer = ({
     question,
     answer,
     questionCategory,
-    questionDifficulty,
     questionType,
     handleSaveQuestionClick,
 }: Props) => {
