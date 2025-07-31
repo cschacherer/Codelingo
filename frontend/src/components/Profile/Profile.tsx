@@ -3,11 +3,11 @@ import icon from "../../assets/react.svg";
 
 interface Props {
     user: string;
-    // email: string;
+    email: string;
     // profilePic: string;
 }
 
-const Profile = ({ user }: Props) => {
+const Profile = ({ user, email }: Props) => {
     return (
         <div className="profile">
             <div className="container">
@@ -19,7 +19,8 @@ const Profile = ({ user }: Props) => {
                         {user}
                     </div>
                     <div className="userData">
-                        <b>Email: </b>test@gmail.com
+                        <b>Email: </b>
+                        {email}
                     </div>
                 </div>
             </div>

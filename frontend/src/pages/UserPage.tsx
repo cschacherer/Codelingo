@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import apiClient from "../services/apiClient";
 import Profile from "../components/Profile/Profile";
 import SavedQuestions from "../components/SavedQuestions/SavedQuestions";
-import ISavedQuestion from "../components/ISavedQuestion";
+import { getUser } from "../services/userService";
+import { SavedQuestion } from "../models/questions";
 
 const UserPage = () => {
-    const params = useParams();
-    const username = params.username ?? "";
+    const [username, setUsername] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
 
-    const [savedQuestions, setSavedQuestions] = useState<ISavedQuestion[]>([]);
+    const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
 
     const getUserData = async () => {
         try {
-            const response = await apiClient.get(`/users/${username}`);
-            if (response.status === 200) {
-                let data = response.data;
-                setSavedQuestions(data.savedQuestions);
-            }
+            const response = await getUser();
+            console.log(response);
+            let x = response.username;
+            setUsername(response.username);
+            setEmail(response.email);
+            setSavedQuestions(response.savedQuestions);
         } catch (e) {
             console.log((e as Error).message);
         }
@@ -30,7 +30,7 @@ const UserPage = () => {
     return (
         <div>
             <h1>Hello {username}</h1>
-            <Profile user={username}></Profile>
+            <Profile user={username} email={email}></Profile>
             <SavedQuestions savedQuestions={savedQuestions}></SavedQuestions>
         </div>
     );

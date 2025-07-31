@@ -62,7 +62,7 @@ def createApp(testing=False):
     jwt = JWTManager(app)
 
     # LLM management
-    useOpenAI = False
+    useOpenAI = True
     if useOpenAI:
         communicator = openAI_LLM()
     else:
@@ -93,14 +93,27 @@ def createApp(testing=False):
         category = data.get("category")
         difficulty = data.get("difficulty")
         type = data.get("type")
-        newQuestion = communicator.generateQuestion(category, difficulty, type)
-        jsonNewQuestion = json.loads(newQuestion)
+        questionData = communicator.generateQuestion(category, difficulty, type)
+        parsedJsonData = json.loads(questionData)
+
+        # Handle case-insensitive keys safely
+        keys_lower = {k.lower(): v for k, v in parsedJsonData.items()}
+        question = (
+            keys_lower.get("question")
+            or f"Error parsing the question from the LLM response. {parsedJsonData}"
+        )
+        answer = (
+            keys_lower.get("answer")
+            or f"Error parsing the answer from the LLM response. {parsedJsonData}"
+        )
+
         return (
             jsonify(
                 category=category,
                 difficulty=difficulty,
                 type=type,
-                question=jsonNewQuestion,
+                question=question,
+                answer=answer,
             ),
             200,
         )
@@ -121,8 +134,8 @@ def createApp(testing=False):
                 return (
                     jsonify(
                         message="Logged in user",
-                        access_token=accessToken,
-                        refresh_token=refreshToken,
+                        accessToken=accessToken,
+                        refreshToken=refreshToken,
                     ),
                     200,
                 )
@@ -151,8 +164,8 @@ def createApp(testing=False):
         return (
             jsonify(
                 message="Registered user",
-                access_token=accessToken,
-                refresh_token=refreshToken,
+                accessToken=accessToken,
+                refreshToken=refreshToken,
             ),
             200,
         )
@@ -162,7 +175,7 @@ def createApp(testing=False):
     def refreshAccessToken():
         currentUserId = get_jwt_identity()
         newAccessToken = create_access_token(str(currentUserId))
-        return jsonify(access_token=newAccessToken)
+        return jsonify(accessToken=newAccessToken)
 
     @app.route("/users", methods=["GET"])
     @jwt_required()
@@ -180,13 +193,16 @@ def createApp(testing=False):
         if not user:
             return jsonify(message="User not found"), 404
         questions = SavedQuestion.query.filter_by(userId=user.id).all()
-        userData = {
-            "username": user.username,
-            "email": user.email,
-            "savedQuestions": [q.to_dict() for q in questions],
-        }
+        userData = {}
 
-        return jsonify(user=userData), 200
+        return (
+            jsonify(
+                username=user.username,
+                email=user.email,
+                savedQuestions=[q.to_dict() for q in questions],
+            ),
+            200,
+        )
 
     @app.route("/user", methods=["PATCH"])
     @jwt_required()
@@ -208,7 +224,7 @@ def createApp(testing=False):
         if newEmail:
             user.email = newEmail
         db.session.commit()
-        return jsonify(user), 200
+        return jsonify(user=user.to_dict()), 200
 
     @app.route("/user", methods=["DELETE"])
     @jwt_required()

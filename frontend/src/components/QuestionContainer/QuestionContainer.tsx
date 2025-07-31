@@ -4,17 +4,25 @@ import "./QuestionContainer.css";
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
-import { Category, Type } from "../../helpers/enumOptions";
+import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import ReactMarkdown from "react-markdown";
 import NavBar from "../Navigation/NavBar";
+import { saveQuestion } from "../../services/questionService";
+import { getErrorMessage } from "../../utils/utils";
 
 interface Props {
     title: string;
     question: string;
     answer: string;
     questionCategory: Category;
+    questionDifficulty: Difficulty;
     questionType: Type;
-    handleSaveQuestionClick: () => void;
+    handleSaveQuestion: (
+        formattedQuestion: string,
+        formattedAnswer: string,
+        userAnswer: string
+    ) => void;
+    isSaved: boolean;
 }
 
 const QuestionContainer = ({
@@ -22,8 +30,10 @@ const QuestionContainer = ({
     question,
     answer,
     questionCategory,
+    questionDifficulty,
     questionType,
-    handleSaveQuestionClick,
+    handleSaveQuestion,
+    isSaved,
 }: Props) => {
     const [userAnswer, setUserAnswer] = useState("");
     const [showAnswer, setShowAnswer] = useState(false);
@@ -117,7 +127,13 @@ const QuestionContainer = ({
                             variant="light"
                             size="lg"
                             id="saveQuestionButton"
-                            onClick={() => handleSaveQuestionClick()}
+                            onClick={() =>
+                                handleSaveQuestion(
+                                    formattedQuestion,
+                                    formattedAnswer,
+                                    userAnswer
+                                )
+                            }
                         >
                             Save Question
                         </Button>

@@ -1,40 +1,47 @@
 import os
 from openai import OpenAI
-import json 
+import json
 
-class openAI_LLM(): 
+
+class openAI_LLM:
 
     def __init__(self):
-        self.client = OpenAI(
-            api_key=os.environ.get("OPENAI_API_KEY")
-        )
+        self.client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
     def generateQuestion(self, subject, difficulty, type):
-        try: 
-            if(type.lower() == "coding"): 
+        try:
+            if type.lower() == "coding":
                 typeMsg = "Create this question so the user has to write code for the answer.  Send back any code written in a readable format."
-            if (type.lower() == "theoretical"): 
+            if type.lower() == "theoretical":
                 typeMsg = "Create this question so that the answer is theoretical, do not use a question where the user will need to write code."
-                
+
             separateMsg = (
-            "Respond with a **valid JSON object only**, with no additional text, formatting, or markdown. "
-            "Your response must be **EXACTLY** in this format: "
-            '{"question": "VALID_JSON_STRING", "answer": "VALID_JSON_STRING"}. '
-            "Ensure both `Question` and `Answer` values are valid **escaped** JSON strings. "
-            "Do not include markdown, explanations, code fences, or any additional text."
-        )
+                "Respond with a **valid JSON object only**, with no additional text, formatting, or markdown. "
+                "Your response must be **EXACTLY** in this format: "
+                '{"question": "VALID_JSON_STRING", "answer": "VALID_JSON_STRING"}. '
+                "Ensure both `question` and `answer` values are valid **escaped** JSON strings. "
+                "Do not include markdown, explanations, code fences, or any additional text."
+            )
 
             completion = self.client.chat.completions.create(
-                model="gpt-3.5-turbo", 
-                messages= [
-                    {"role": "system", "content": "You will write questions that coders can use to test thier knowledge of coding subjects. Generate a coding question and what the answer to that question would be."}, 
-                    {"role": "user", "content": f"Write a coding interview question to test a user's {subject} skills.  The difficulty of this question should be {difficulty}. {typeMsg}. {separateMsg}"}
-                ] 
-            )  
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You will write questions that coders can use to test thier knowledge of coding subjects. Generate a coding question and what the answer to that question would be.",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Write a coding interview question to test a user's {subject} skills.  The difficulty of this question should be {difficulty}. {typeMsg}. {separateMsg}",
+                    },
+                ],
+            )
 
-            jsonString = json.dumps(completion.choices[0].message.content)
-            return jsonString
+            stringData = completion.choices[0].message.content
+            return stringData
 
-        except Exception as e: 
-            return "Error generating question using OpenAI. " + repr(e); 
-        
+        except Exception as e:
+            return {
+                "question": "Error generating question using OpenAI. " + repr(e),
+                "answer": "",
+            }

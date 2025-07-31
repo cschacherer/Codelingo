@@ -3,7 +3,7 @@ import Dropdown from "../Dropdown/Dropdown";
 import IQuestionOptions from "../IQuestionOptions";
 import "./GeneratePanel.css";
 import { useState, useEffect } from "react";
-import { Category, Difficulty, Type } from "../../helpers/enumOptions";
+import { Category, Difficulty, Type } from "../../utils/enumOptions";
 
 interface Props {
     options: IQuestionOptions;

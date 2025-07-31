@@ -8,7 +8,7 @@ import QuestionContainer from "../components/QuestionContainer/QuestionContainer
 import IQuestionOptions from "../components/IQuestionOptions";
 import SideBar from "../components/SideBar/SideBar";
 import owlIcon from "../assets/owlIcon.svg";
-import { Defaults } from "../helpers/defaults";
+import { Defaults } from "../utils/defaults";
 import {
     Category,
     Difficulty,
@@ -16,12 +16,15 @@ import {
     getCategoryFromString,
     getDifficultyFromString,
     getTypeFromString,
-} from "../helpers/enumOptions";
+} from "../utils/enumOptions";
 import "./css/HomePage.css";
-import apiClient from "../services/apiClient";
-import { getErrorMessage } from "../helpers/utils";
+import { getErrorMessage } from "../utils/utils";
+import { useAuth } from "../context/authContext";
+import { generateQuestion, saveQuestion } from "../services/questionService";
 
 const HomePage = () => {
+    let auth = useAuth();
+
     let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
     const [question, setQuestion] = useState("");
@@ -34,6 +37,8 @@ const HomePage = () => {
     const [questionType, setQuestionType] = useState(Type.Coding);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [questionIsSaved, setQuestionIsSaved] = useState(false);
 
     const generateQuestionFunction = async (
         category: string,
@@ -51,80 +56,42 @@ const HomePage = () => {
             }
 
             setIsLoading(true);
-            const jsonBody = {
-                category: category,
-                difficulty: difficulty,
-                type: type,
-            };
-            const response = await apiClient.post(
-                "/generate_question",
-                jsonBody,
-                {
-                    headers: {
-                        "Access-Control-Allow-Origin": "*",
-                        "Access-Control-Allow-Headers": "*",
-                    },
-                }
-            );
-            let jsonData = response.data;
 
-            try {
-                let parsedJSONData = JSON.parse(jsonData.question);
-
-                let parsedQuestion =
-                    parsedJSONData.question ||
-                    parsedJSONData.Question ||
-                    parsedJSONData.QUESTION;
-                if (parsedQuestion) {
-                    setQuestion(parsedQuestion);
-                } else {
-                    setQuestion("Error parsing question. Please try again.");
-                }
-
-                let parsedAnswer =
-                    parsedJSONData.answer ||
-                    parsedJSONData.Answer ||
-                    parsedJSONData.ANSWER;
-                if (parsedAnswer) {
-                    setAnswer(parsedAnswer);
-                } else {
-                    setAnswer("Error parsing answer. Please try again.");
-                }
-            } catch (e: any) {
-                setQuestion(`Error parsing question. ${e.message}`);
-                setAnswer("");
-            }
-
-            setQuestionCategory(getCategoryFromString(category));
-            setQuestionDifficulty(getDifficultyFromString(difficulty));
-            setQuestionType(getTypeFromString(type));
+            const data = await generateQuestion(category, difficulty, type);
+            setQuestion(data.question);
+            setAnswer(data.answer);
+            setQuestionCategory(getCategoryFromString(data.category));
+            setQuestionDifficulty(getDifficultyFromString(data.difficulty));
+            setQuestionType(getTypeFromString(data.type));
         } catch (err) {
             let msg = getErrorMessage(err);
-            console.log(msg);
+            setQuestion(msg);
+            setAnswer("");
         } finally {
             setIsLoading(false);
         }
     };
 
-    const saveQuestionFunction = async () => {
+    const saveQuestionFunction = async (
+        formattedQuestion: string,
+        formattedAnswer: string,
+        userAnswer: string
+    ) => {
         try {
-            const questionDetails = {
-                category: questionCategory,
-                difficulty: questionDifficulty,
-                type: questionType,
-                question: question,
-                answer: answer,
-                notes: "",
-                userAnswer: "user answer here",
-            };
-            const response = await apiClient.post(
-                "/savequestion",
-                questionDetails
+            const data = await saveQuestion(
+                questionCategory,
+                questionDifficulty,
+                questionType,
+                formattedQuestion,
+                formattedAnswer,
+                userAnswer,
+                ""
             );
-
-            const x = response.data;
-        } catch (e) {
-        } finally {
+            setQuestionIsSaved(true);
+        } catch (err) {
+            let msg = getErrorMessage(err);
+            console.log(msg);
+            setQuestionIsSaved(false);
         }
     };
 
@@ -163,8 +130,10 @@ const HomePage = () => {
                         question={question}
                         answer={answer}
                         questionCategory={questionCategory}
+                        questionDifficulty={questionDifficulty}
                         questionType={questionType}
-                        handleSaveQuestionClick={saveQuestionFunction}
+                        handleSaveQuestion={saveQuestionFunction}
+                        isSaved={questionIsSaved}
                     ></QuestionContainer>
                 </Col>
             </Row>

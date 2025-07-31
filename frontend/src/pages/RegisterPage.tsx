@@ -1,36 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/LoginAndRegister.css";
-import apiClient from "../services/apiClient";
-import { getErrorMessage } from "../helpers/utils";
+import { getErrorMessage } from "../utils/utils";
+import { useAuth } from "../context/authContext";
 
 const RegisterPage = () => {
-    const [usernameText, setUsernameText] = useState("admin");
-    const [passwordText, setPasswordText] = useState("admin123");
-    const [emailText, setEmailText] = useState("something@gmail.com");
-    const [errorText, setErrorText] = useState("");
+    const [username, setUsername] = useState("admin");
+    const [password, setPassword] = useState("admin123");
+    const [email, setEmail] = useState("something@gmail.com");
+    const [error, setError] = useState("");
 
+    const auth = useAuth();
     const navigate = useNavigate();
 
-    const registerUser = async () => {
-        const registerInfo = {
-            username: usernameText,
-            password: passwordText,
-            email: emailText,
-        };
-
+    const register = async () => {
         try {
-            const response = await apiClient.post("/register", registerInfo);
-            if (response.status == 200) {
-                navigate(`users/${usernameText}`);
-            } else {
-                setErrorText(
-                    `Error registering user. ${response.data?.message}`
-                );
-            }
-        } catch (e) {
-            let msg = getErrorMessage(e);
-            setErrorText(`Error registering user. ${msg}`);
+            auth.registerUser(username, password, email);
+            navigate("/");
+        } catch (err) {
+            let msg = getErrorMessage(err);
+            setError(`Error registering user. ${msg}`);
         }
     };
 
@@ -40,14 +29,14 @@ const RegisterPage = () => {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    registerUser();
+                    register();
                 }}
             >
                 <div className="field">
                     <input
                         type="text"
-                        value={usernameText}
-                        onChange={(e) => setUsernameText(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                     />
                     <label>Username</label>
@@ -55,8 +44,8 @@ const RegisterPage = () => {
                 <div className="field">
                     <input
                         type="password"
-                        value={passwordText}
-                        onChange={(e) => setPasswordText(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                     <label>Password</label>
@@ -64,17 +53,17 @@ const RegisterPage = () => {
                 <div className="field">
                     <input
                         type="text"
-                        value={emailText}
-                        onChange={(e) => setEmailText(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <label>Email (Optional)</label>
                 </div>
                 <div className="field">
                     <input type="submit" value="Register" />
                 </div>
-                {errorText !== "" && (
+                {error !== "" && (
                     <div className="error">
-                        <p>{errorText}</p>
+                        <p>{error}</p>
                     </div>
                 )}
                 <div className="signup-link">

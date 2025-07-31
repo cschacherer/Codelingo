@@ -37,7 +37,7 @@ import {
     acceptCompletion,
 } from "@codemirror/autocomplete";
 import { lintKeymap } from "@codemirror/lint";
-import { Category } from "../../helpers/enumOptions";
+import { Category } from "../../utils/enumOptions";
 //supported langugages
 import { angular } from "@codemirror/lang-angular";
 import { css } from "@codemirror/lang-css";

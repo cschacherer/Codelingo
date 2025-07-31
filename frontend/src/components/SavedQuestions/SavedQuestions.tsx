@@ -1,8 +1,8 @@
+import { SavedQuestion } from "../../models/questions";
 import "./SavedQuestions.css";
-import ISavedQuestion from "../ISavedQuestion";
 
 interface Props {
-    savedQuestions: ISavedQuestion[];
+    savedQuestions: SavedQuestion[];
 }
 
 const SavedQuestions = ({ savedQuestions }: Props) => {
@@ -22,7 +22,7 @@ const SavedQuestions = ({ savedQuestions }: Props) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {savedQuestions.map((item) => {
+                    {savedQuestions?.map((item) => {
                         return (
                             <tr key={item.id}>
                                 <td>{item.category}</td>

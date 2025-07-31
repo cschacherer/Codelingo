@@ -1,31 +1,36 @@
-import { getErrorMessage } from "../helpers/utils";
-import { UserProfileToken } from "../models/user";
+import { getErrorMessage } from "../utils/utils";
+import { UserToken } from "../models/user";
 import apiClient from "./apiClient";
 
-
-export const loginAPI = async (username: string, password: string) => {
+export const login = async (username: string, password: string) => {
     try {
-        const data = await apiClient.post<UserProfileToken>("/login", {
-            username: username, 
-            password: password
-        }) 
-        return data; 
+        const response = await apiClient.post<UserToken>("/login", {
+            username: username,
+            password: password,
+        });
+        return response.data;
     } catch (error) {
-        let msg = getErrorMessage(error); 
-        console.log(msg); 
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
     }
-}
+};
 
-export const registerAPI = async (username: string, password: string, email: string) => {
+export const register = async (
+    username: string,
+    password: string,
+    email: string
+) => {
     try {
-        const data = await apiClient.post<UserProfileToken>("/register", {
-            username: username, 
-            password: password, 
+        const response = await apiClient.post<UserToken>("/register", {
+            username: username,
+            password: password,
             email: email,
-        }) 
-        return data; 
+        });
+        return response.data;
     } catch (error) {
-        let msg = getErrorMessage(error); 
-        console.log(msg); 
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
     }
-}
+};

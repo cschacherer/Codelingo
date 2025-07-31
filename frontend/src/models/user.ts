@@ -1,10 +1,12 @@
-export type UserProfileToken = {
-    username: string; 
-    email: string; 
-    token: string; 
-}
+import { SavedQuestion } from "./questions";
 
-export type UserProfile = {
-    username: string; 
-    email: string; 
-}
+export type UserToken = {
+    accessToken: string;
+    refreshToken: string;
+};
+
+export type User = {
+    username: string;
+    email: string;
+    savedQuestions: SavedQuestion[];
+};

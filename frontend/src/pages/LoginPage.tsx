@@ -2,38 +2,30 @@ import axios from "axios";
 import "./css/LoginAndRegister.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import apiClient from "../services/apiClient";
-import { getErrorMessage } from "../helpers/utils";
+import { getErrorMessage } from "../utils/utils";
+import { useAuth } from "../context/authContext";
 
 const LoginPage = () => {
-    const [usernameText, setUsernameText] = useState("admin");
-    const [passwordText, setPasswordText] = useState("admin123");
-    const [errorText, setErrorText] = useState("");
+    const [username, setUsername] = useState("admin");
+    const [password, setPassword] = useState("admin123");
+    const [error, setError] = useState("");
 
+    const auth = useAuth();
     const navigate = useNavigate();
 
-    const sendLoginCredentials = async () => {
-        const jsonLogin = {
-            username: usernameText,
-            password: passwordText,
-        };
-
+    const login = async () => {
         try {
-            const response = await apiClient.post("/login", jsonLogin);
-            if (response.status === 200) {
-                navigate(`/users/${usernameText}`);
-            } else if (response.status === 401) {
-                setErrorText("You're username or password were incorrect.");
-            }
-        } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                setErrorText("You're username or password were incorrect.");
+            auth.loginUser(username, password);
+            navigate("/");
+        } catch (err) {
+            if (axios.isAxiosError(err) && err.response?.status === 401) {
+                setError("You're username or password were incorrect.");
             } else {
-                let msg = getErrorMessage(error);
-                setErrorText(`Error logging in. ${msg}`);
+                let msg = getErrorMessage(err);
+                setError(`Error logging in. ${msg}`);
             }
-            setUsernameText("");
-            setPasswordText("");
+            setUsername("");
+            setPassword("");
         }
     };
 
@@ -43,14 +35,14 @@ const LoginPage = () => {
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
-                    sendLoginCredentials();
+                    login();
                 }}
             >
                 <div className="field">
                     <input
                         type="text"
-                        value={usernameText}
-                        onChange={(e) => setUsernameText(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                     />
                     <label>Username</label>
@@ -58,8 +50,8 @@ const LoginPage = () => {
                 <div className="field">
                     <input
                         type="password"
-                        value={passwordText}
-                        onChange={(e) => setPasswordText(e.target.value)}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                     />
                     <label>Password</label>
@@ -76,9 +68,9 @@ const LoginPage = () => {
                 <div className="field">
                     <input type="submit" value="Login" />
                 </div>
-                {errorText !== "" && (
+                {error !== "" && (
                     <div className="error">
-                        <p>{errorText}</p>
+                        <p>{error}</p>
                     </div>
                 )}
 
