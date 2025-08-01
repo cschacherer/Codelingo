@@ -9,18 +9,12 @@ import IQuestionOptions from "../components/IQuestionOptions";
 import SideBar from "../components/SideBar/SideBar";
 import owlIcon from "../assets/owlIcon.svg";
 import { Defaults } from "../utils/defaults";
-import {
-    Category,
-    Difficulty,
-    Type,
-    getCategoryFromString,
-    getDifficultyFromString,
-    getTypeFromString,
-} from "../utils/enumOptions";
+import { Category, Difficulty, Type } from "../utils/enumOptions";
 import "./css/HomePage.css";
 import { getErrorMessage } from "../utils/utils";
 import { useAuth } from "../context/authContext";
 import { generateQuestion, saveQuestion } from "../services/questionService";
+import NavBar from "../components/Navigation/NavBar";
 
 const HomePage = () => {
     let auth = useAuth();
@@ -158,16 +152,19 @@ const HomePage = () => {
                     ></SideBar>
                 </Col>
                 <Col className="questionBackground">
-                    <QuestionContainer
-                        title="New Question"
-                        question={question}
-                        answer={answer}
-                        questionCategory={questionCategory}
-                        questionDifficulty={questionDifficulty}
-                        questionType={questionType}
-                        handleSaveQuestion={saveQuestionFunction}
-                        isSaved={questionIsSaved}
-                    ></QuestionContainer>
+                    <Container>
+                        <NavBar loggedIn={auth.loggedIn}></NavBar>
+                        <QuestionContainer
+                            title="New Question"
+                            question={question}
+                            answer={answer}
+                            questionCategory={questionCategory}
+                            questionDifficulty={questionDifficulty}
+                            questionType={questionType}
+                            handleSaveQuestion={saveQuestionFunction}
+                            isSaved={questionIsSaved}
+                        ></QuestionContainer>
+                    </Container>
                 </Col>
             </Row>
         </Container>

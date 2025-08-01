@@ -77,8 +77,6 @@ const QuestionContainer = ({
     return (
         <>
             <Container fluid>
-                <NavBar></NavBar>
-
                 <div>
                     <h1 className="questionHeader defaultMargins">{title}</h1>
                     <pre className="defaultLRPadding" id="questionText">

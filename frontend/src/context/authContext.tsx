@@ -8,10 +8,10 @@ import { tokenStorage } from "../utils/tokenStorage";
 type AuthContextType = {
     accessToken: string | null;
     refreshToken: string | null;
+    loggedIn: boolean;
     registerUser: (username: string, password: string, email: string) => void;
     loginUser: (username: string, password: string) => void;
     logoutUser: () => void;
-    isLoggedIn: () => boolean;
 };
 
 type Props = {
@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: Props) => {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
+    const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     useEffect(() => {
         //load any existing tokens when first loading
@@ -31,14 +32,24 @@ export const AuthProvider = ({ children }: Props) => {
         const storedRefreshToken = tokenStorage.getRefreshToken();
         setAccessToken(storedAccessToken);
         setRefreshToken(storedRefreshToken);
+        setLoggedInIfValidAccessToken();
 
         //if setTokens or clearTokens is called from anywhere in the application (here or in apiClient.ts),
         //it will update the accessToken and refreshToken in AuthProvider
         tokenStorage.onChange((accessToken, refreshToken) => {
             setAccessToken(accessToken);
             setRefreshToken(refreshToken);
+            setLoggedInIfValidAccessToken();
         });
     }, []);
+
+    const setLoggedInIfValidAccessToken = () => {
+        if (tokenStorage.getAccessToken()) {
+            setLoggedIn(true);
+        } else {
+            setLoggedIn(false);
+        }
+    };
 
     const registerUser = async (
         username: string,
@@ -64,13 +75,6 @@ export const AuthProvider = ({ children }: Props) => {
         }
     };
 
-    const isLoggedIn = () => {
-        if (accessToken) {
-            return true;
-        }
-        return false;
-    };
-
     const logoutUser = () => {
         tokenStorage.clearTokens();
     };
@@ -80,9 +84,9 @@ export const AuthProvider = ({ children }: Props) => {
             value={{
                 accessToken,
                 refreshToken,
+                loggedIn,
                 registerUser,
                 loginUser,
-                isLoggedIn,
                 logoutUser,
             }}
         >
