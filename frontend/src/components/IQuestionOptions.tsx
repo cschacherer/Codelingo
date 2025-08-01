@@ -1,6 +1,8 @@
+import { Category } from "../utils/enumOptions";
+
 interface IQuestionOptions {
     categoryLabel: string;
-    categoryOptions: string[];
+    categoryOptions: Category[];
     difficultyLabel: string;
     difficultyOptions: string[];
     typeLabel: string;

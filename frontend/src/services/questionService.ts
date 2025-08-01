@@ -4,9 +4,9 @@ import { Question, SavedQuestion } from "../models/questions";
 import { Category, Difficulty, Type } from "../utils/enumOptions";
 
 export const generateQuestion = async (
-    category: string,
-    difficulty: string,
-    type: string
+    category: Category,
+    difficulty: Difficulty,
+    type: Type
 ) => {
     try {
         const parameters = {

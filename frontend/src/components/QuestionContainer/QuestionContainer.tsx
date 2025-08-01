@@ -134,6 +134,7 @@ const QuestionContainer = ({
                                     userAnswer
                                 )
                             }
+                            disabled={isSaved}
                         >
                             Save Question
                         </Button>

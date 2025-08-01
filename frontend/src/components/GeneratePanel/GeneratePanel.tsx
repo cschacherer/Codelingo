@@ -7,38 +7,50 @@ import { Category, Difficulty, Type } from "../../utils/enumOptions";
 
 interface Props {
     options: IQuestionOptions;
-    handleOnClick: (category: string, difficulty: string, type: string) => void;
+    selectedCategory: Category;
+    selectedDifficulty: Difficulty;
+    selectedType: Type;
+    handleCategoryChange: (newValue: Category) => void;
+    handleDifficultyChange: (newValue: Difficulty) => void;
+    hanldeTypeChange: (newValue: Type) => void;
+    handleOnClick: (
+        category: Category,
+        difficulty: Difficulty,
+        type: Type
+    ) => void;
     loading: boolean;
 }
 
-const GeneratePanel = ({ options, handleOnClick, loading }: Props) => {
-    const [selectedCategory, setSelectedCategory] = useState(
-        Category.Python.toString()
-    );
-    const [selectedDifficulty, setSelectedDifficulty] = useState(
-        Difficulty.Easy.toString()
-    );
-    const [selectedType, setSelectedType] = useState(Type.Coding.toString());
-
+const GeneratePanel = ({
+    options,
+    selectedCategory,
+    selectedDifficulty,
+    selectedType,
+    handleCategoryChange,
+    handleDifficultyChange,
+    hanldeTypeChange,
+    handleOnClick,
+    loading,
+}: Props) => {
     return (
         <div className="container verticalFlex">
             <Dropdown
                 title={options.categoryLabel}
                 items={options.categoryOptions}
                 selectedItem={selectedCategory}
-                changeSelectedItem={setSelectedCategory}
+                changeSelectedItem={handleCategoryChange}
             ></Dropdown>
             <Dropdown
                 title={options.difficultyLabel}
                 items={options.difficultyOptions}
                 selectedItem={selectedDifficulty}
-                changeSelectedItem={setSelectedDifficulty}
+                changeSelectedItem={handleDifficultyChange}
             ></Dropdown>
             <Dropdown
                 title={options.typeLabel}
                 items={options.typeOptions}
                 selectedItem={selectedType}
-                changeSelectedItem={setSelectedType}
+                changeSelectedItem={hanldeTypeChange}
             ></Dropdown>
 
             <Button
