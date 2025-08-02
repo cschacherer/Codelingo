@@ -1,0 +1,18 @@
+.generatePanel__container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    width: 100%;
+    margin: 0;   
+}
+
+.generatePanel__button {
+    margin: 20px;
+    width: auto;
+    align-self: center;
+}
+
+.generatePanel__loadSpinner {
+    margin-right:10px;
+    vertical-align: baseline;
+}

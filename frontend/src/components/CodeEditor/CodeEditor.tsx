@@ -21,13 +21,7 @@ import {
     bracketMatching,
     foldKeymap,
 } from "@codemirror/language";
-import {
-    defaultKeymap,
-    history,
-    historyKeymap,
-    indentWithTab,
-    insertTab,
-} from "@codemirror/commands";
+import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 import {
     autocompletion,

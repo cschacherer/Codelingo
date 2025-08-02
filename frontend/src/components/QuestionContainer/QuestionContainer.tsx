@@ -6,7 +6,7 @@ import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import ReactMarkdown from "react-markdown";
-import NavBar from "../Navigation/NavBar";
+import NavigationBar from "../Navigation/NavigationBar";
 import { saveQuestion } from "../../services/questionService";
 import { getErrorMessage } from "../../utils/utils";
 

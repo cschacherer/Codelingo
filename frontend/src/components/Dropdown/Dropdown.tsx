@@ -3,7 +3,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import "./Dropdown.css";
+
+import styles from "./Dropdown.module.css";
 
 interface Props {
     title: string;
@@ -19,22 +20,22 @@ const Dropdown = ({
     changeSelectedItem,
 }: Props) => {
     return (
-        <Container>
-            <Row className="horizontalFlex">
-                <Col className="centerVertically horizontalRight minLabelSize">
-                    <h1 className="nameText margins">{title}</h1>
+        <Container className="dropdown__container">
+            <Row className={`${styles.dropdown__row}`}>
+                <Col className={`${styles.dropdown__lableColumn}`}>
+                    <h1 className={`${styles.dropdown__lableText}`}>{title}</h1>
                 </Col>
-                <Col className="centerVertically minButtonSize ">
-                    <div className="dropdown horizontalRight">
+                <Col>
+                    <div className="dropdown">
                         <button
-                            className="btn btn-light dropdown-toggle margins minButtonSize fullWidth dropdownSpacing"
+                            className={`btn btn-light dropdown-toggle ${styles.dropdown__dropdownButton}`}
                             type="button"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                         >
                             {selectedItem}
                         </button>
-                        <ul className="dropdown-menu buttonWidth">
+                        <ul className="dropdown-menu">
                             {items.map((item) => (
                                 <li
                                     className="dropdown-item"

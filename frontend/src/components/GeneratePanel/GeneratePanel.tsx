@@ -1,8 +1,8 @@
 import Button from "react-bootstrap/Button";
 import Dropdown from "../Dropdown/Dropdown";
+import Container from "react-bootstrap/Container";
 import IQuestionOptions from "../IQuestionOptions";
-import "./GeneratePanel.css";
-import { useState, useEffect } from "react";
+import style from "./GeneratePanel.module.css";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
 
 interface Props {
@@ -33,7 +33,7 @@ const GeneratePanel = ({
     loading,
 }: Props) => {
     return (
-        <div className="container verticalFlex">
+        <Container className={`${style.generatePanel__container}`}>
             <Dropdown
                 title={options.categoryLabel}
                 items={options.categoryOptions}
@@ -56,7 +56,7 @@ const GeneratePanel = ({
             <Button
                 variant="outline-light"
                 size="lg"
-                className="buttonMargins"
+                className={`${style.generatePanel__button}`}
                 onClick={() =>
                     handleOnClick(
                         selectedCategory,
@@ -67,13 +67,13 @@ const GeneratePanel = ({
             >
                 {loading && (
                     <div
-                        className="spinner-border spinner-border-sm mr-5"
+                        className={`spinner-border spinner-border-sm ${style.generatePanel__loadSpinner} `}
                         role="status"
                     ></div>
                 )}
                 {loading ? "Generating Question" : "Generate Question"}
             </Button>
-        </div>
+        </Container>
     );
 };
 

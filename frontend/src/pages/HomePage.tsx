@@ -14,7 +14,7 @@ import "./css/HomePage.css";
 import { getErrorMessage } from "../utils/utils";
 import { useAuth } from "../context/authContext";
 import { generateQuestion, saveQuestion } from "../services/questionService";
-import NavBar from "../components/Navigation/NavBar";
+import NavigationBar from "../components/Navigation/NavigationBar";
 
 const HomePage = () => {
     let auth = useAuth();
@@ -153,7 +153,7 @@ const HomePage = () => {
                 </Col>
                 <Col className="questionBackground">
                     <Container>
-                        <NavBar loggedIn={auth.loggedIn}></NavBar>
+                        <NavigationBar loggedIn={auth.loggedIn}></NavigationBar>
                         <QuestionContainer
                             title="New Question"
                             question={question}

@@ -1,0 +1,28 @@
+.dropdown__row {
+    padding: 15px 0px;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown__lableColumn {
+    width: 40%;
+    min-width: 40%;
+    flex: 0 0 40%; /* Required to override Bootstrap's default flex behavior */
+}
+
+.dropdown__lableText {
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    text-align: right; 
+    margin: 0px;     
+}
+
+.dropdown__dropdownButton {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    width: 100%;
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+}
