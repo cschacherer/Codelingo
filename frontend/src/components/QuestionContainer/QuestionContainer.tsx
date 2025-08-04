@@ -1,12 +1,11 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import "./QuestionContainer.css";
+import style from "./QuestionContainer.module.css";
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import ReactMarkdown from "react-markdown";
-import NavigationBar from "../Navigation/NavigationBar";
 import { saveQuestion } from "../../services/questionService";
 import { getErrorMessage } from "../../utils/utils";
 
@@ -75,83 +74,85 @@ const QuestionContainer = ({
     };
 
     return (
-        <>
-            <Container fluid>
-                <div>
-                    <h1 className="questionHeader defaultMargins">{title}</h1>
-                    <pre className="defaultLRPadding" id="questionText">
-                        <ReactMarkdown>{formattedQuestion}</ReactMarkdown>
-                    </pre>
+        <div className={style.questionContainer}>
+            <div>
+                <h1 className={style.questionContainer__questionHeader}>
+                    {title}
+                </h1>
+                <div className={style.questionContainer__questionText}>
+                    <ReactMarkdown>{formattedQuestion}</ReactMarkdown>
                 </div>
+            </div>
 
-                <div className="defaultMargins">
-                    {questionType === Type.Coding ? (
-                        <div>
-                            <h4>
-                                Your Answer: {questionCategory} Coding Editor
-                            </h4>
-                            <CodeEditor
-                                questionCategory={questionCategory}
-                                answerText={userAnswer}
-                            ></CodeEditor>
-                        </div>
-                    ) : (
-                        <Form.Group>
-                            <Form.Label
-                                className="text-sm-right"
-                                id="yourAnswerLabel"
-                            >
-                                Your answer
-                            </Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={8}
-                                onChange={handleUserAnswerChange}
-                                value={userAnswer}
-                            ></Form.Control>
-                        </Form.Group>
-                    )}
-                    <div className="buttonContainer">
-                        <Button
-                            variant="light"
-                            size="lg"
-                            id="showAnswerButton"
-                            onClick={handleShowAnswerClicked}
+            <div>
+                {questionType === Type.Coding ? (
+                    <div>
+                        <label
+                            className={style.questionContainer__userAnswerLabel}
                         >
-                            {showAnswer ? "Hide Answer" : "Show Answer"}
-                        </Button>
-
-                        <Button
-                            variant="light"
-                            size="lg"
-                            id="saveQuestionButton"
-                            onClick={() =>
-                                handleSaveQuestion(
-                                    formattedQuestion,
-                                    formattedAnswer,
-                                    userAnswer
-                                )
-                            }
-                            disabled={isSaved}
-                        >
-                            Save Question
-                        </Button>
+                            Your Answer: {questionCategory} Coding Editor
+                        </label>
+                        <CodeEditor
+                            questionCategory={questionCategory}
+                            answerText={userAnswer}
+                        ></CodeEditor>
                     </div>
-                </div>
-
-                {showAnswer && (
-                    <div className="border defaultMargins">
-                        <h1 className="answerHeader defaultMargins">Answer</h1>
-                        <pre
-                            className="display-linebreak defaultLRPadding"
-                            id="answerText"
+                ) : (
+                    <Form.Group>
+                        <Form.Label
+                            className={style.questionContainer__userAnswerLabel}
                         >
-                            <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
-                        </pre>
-                    </div>
+                            Your answer
+                        </Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={8}
+                            onChange={handleUserAnswerChange}
+                            value={userAnswer}
+                        ></Form.Control>
+                    </Form.Group>
                 )}
-            </Container>
-        </>
+                <div className={style.questionContainer__buttonContainer}>
+                    <Button
+                        className={style.questionContainer__button}
+                        variant="light"
+                        size="lg"
+                        id="showAnswerButton"
+                        onClick={handleShowAnswerClicked}
+                    >
+                        {showAnswer ? "Hide Answer" : "Show Answer"}
+                    </Button>
+
+                    <Button
+                        className={style.questionContainer__button}
+                        variant="light"
+                        size="lg"
+                        id="saveQuestionButton"
+                        onClick={() =>
+                            handleSaveQuestion(
+                                formattedQuestion,
+                                formattedAnswer,
+                                userAnswer
+                            )
+                        }
+                        disabled={isSaved}
+                    >
+                        Save Question
+                    </Button>
+                </div>
+            </div>
+
+            {showAnswer && (
+                <div className={style.questionContainer__answerContainer}>
+                    <h1 className={style.questionContainer__answerHeader}>
+                        Answer
+                    </h1>
+                    <div className={style.questionContainer__answerText}>
+                        <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

@@ -1,7 +1,8 @@
-import "./SideBar.css";
 import GeneratePanel from "../GeneratePanel/GeneratePanel";
 import IQuestionOptions from "../IQuestionOptions";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
+import { Container } from "react-bootstrap";
+import style from "./SideBar.module.css";
 
 interface Props {
     name: string;
@@ -22,7 +23,6 @@ interface Props {
 }
 
 const SideBar = ({
-    name,
     icon,
     options,
     selectedCategory,
@@ -35,27 +35,25 @@ const SideBar = ({
     loading,
 }: Props) => {
     return (
-        <div className="container sideBarBackground">
-            <div className="container verticalFlex" id="mainGroup">
-                <h1>
-                    <a href="/" id="titleText">
-                        {name}
-                    </a>
-                </h1>
-                <img className="icon iconSize" src={icon} />
-                <GeneratePanel
-                    options={options}
-                    selectedCategory={selectedCategory}
-                    selectedDifficulty={selectedDifficulty}
-                    selectedType={selectedType}
-                    handleCategoryChange={handleCategoryChange}
-                    handleDifficultyChange={handleDifficultyChange}
-                    hanldeTypeChange={hanldeTypeChange}
-                    handleOnClick={handleOnClick}
-                    loading={loading}
-                ></GeneratePanel>
-            </div>
-        </div>
+        <Container className={`${style.sideBar__container}`} id="mainGroup">
+            <h1>
+                <a className={style.sideBar__title} href="/" id="titleText">
+                    CodeLingo
+                </a>
+            </h1>
+            <img className={style.sideBar__image} src={icon} />
+            <GeneratePanel
+                options={options}
+                selectedCategory={selectedCategory}
+                selectedDifficulty={selectedDifficulty}
+                selectedType={selectedType}
+                handleCategoryChange={handleCategoryChange}
+                handleDifficultyChange={handleDifficultyChange}
+                hanldeTypeChange={hanldeTypeChange}
+                handleOnClick={handleOnClick}
+                loading={loading}
+            ></GeneratePanel>
+        </Container>
     );
 };
 

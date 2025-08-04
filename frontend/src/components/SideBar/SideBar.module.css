@@ -1,32 +1,22 @@
-.sideBarBackground {
+.sideBar__container {
     background: linear-gradient(#21d4fc, #a238fe);
-    height: 100vh;
-    position: sticky;
-    top: 0; 
-}
-
-.verticalFlex {
+    top: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
-#titleText {
+.sideBar__title {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 70px;
-    flex: 1;
     margin: 5;
     text-decoration: none;
 }
 
-.iconSize {
-    height: 200px ; 
+.sideBar__image {
+    height: 200px;
     width: 200px
-}
-
-#mainGroup {
-    position: sticky;
-    top: 200px; 
 }

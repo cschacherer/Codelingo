@@ -1,5 +1,4 @@
 import { basicSetup } from "codemirror";
-
 import { useRef, useEffect } from "react";
 import { EditorState, Compartment } from "@codemirror/state";
 import {
@@ -43,6 +42,8 @@ import { php } from "@codemirror/lang-php";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { vue } from "@codemirror/lang-vue";
+
+import style from "./CodeEditor.module.css";
 
 interface Props {
     questionCategory: Category;

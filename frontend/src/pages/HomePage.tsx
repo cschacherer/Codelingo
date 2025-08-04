@@ -10,7 +10,7 @@ import SideBar from "../components/SideBar/SideBar";
 import owlIcon from "../assets/owlIcon.svg";
 import { Defaults } from "../utils/defaults";
 import { Category, Difficulty, Type } from "../utils/enumOptions";
-import "./css/HomePage.css";
+import style from "./css/HomePage.module.css";
 import { getErrorMessage } from "../utils/utils";
 import { useAuth } from "../context/authContext";
 import { generateQuestion, saveQuestion } from "../services/questionService";
@@ -134,40 +134,36 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Container id="mainContainer">
-            <Row className="vh-100">
-                <Col className="noPadding" id="sideWidth">
-                    <SideBar
-                        name="CodeLingo"
-                        icon={owlIcon}
-                        options={questionOptions}
-                        selectedCategory={selectedCategory}
-                        selectedDifficulty={selectedDifficulty}
-                        selectedType={selectedType}
-                        handleCategoryChange={updateCategoryChanged}
-                        handleDifficultyChange={updateDifficultyChanged}
-                        hanldeTypeChange={updateTypeChanged}
-                        handleOnClick={generateQuestionFunction}
-                        loading={isLoading}
-                    ></SideBar>
-                </Col>
-                <Col className="questionBackground">
-                    <Container>
-                        <NavigationBar loggedIn={auth.loggedIn}></NavigationBar>
-                        <QuestionContainer
-                            title="New Question"
-                            question={question}
-                            answer={answer}
-                            questionCategory={questionCategory}
-                            questionDifficulty={questionDifficulty}
-                            questionType={questionType}
-                            handleSaveQuestion={saveQuestionFunction}
-                            isSaved={questionIsSaved}
-                        ></QuestionContainer>
-                    </Container>
-                </Col>
-            </Row>
-        </Container>
+        <div className={style.homePage__container}>
+            <div className={style.homePage__sideBarColumn}>
+                <SideBar
+                    name="CodeLingo"
+                    icon={owlIcon}
+                    options={questionOptions}
+                    selectedCategory={selectedCategory}
+                    selectedDifficulty={selectedDifficulty}
+                    selectedType={selectedType}
+                    handleCategoryChange={updateCategoryChanged}
+                    handleDifficultyChange={updateDifficultyChanged}
+                    hanldeTypeChange={updateTypeChanged}
+                    handleOnClick={generateQuestionFunction}
+                    loading={isLoading}
+                ></SideBar>
+            </div>
+            <div className={style.homePage__questionColumn}>
+                <NavigationBar loggedIn={auth.loggedIn}></NavigationBar>
+                <QuestionContainer
+                    title="New Question"
+                    question={question}
+                    answer={answer}
+                    questionCategory={questionCategory}
+                    questionDifficulty={questionDifficulty}
+                    questionType={questionType}
+                    handleSaveQuestion={saveQuestionFunction}
+                    isSaved={questionIsSaved}
+                ></QuestionContainer>
+            </div>
+        </div>
     );
 };
 

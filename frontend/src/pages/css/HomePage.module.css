@@ -1,0 +1,23 @@
+.homePage__container {
+    display: flex;
+    flex-direction: row;
+    padding: 0px;
+    margin: 0px; 
+    width: 100%;
+    height: 100%;
+}
+
+.homePage__sideBarColumn {
+    width: 450px;
+    min-width: 450px;
+    max-width: 450px;
+    padding: 0 !important;
+}
+
+.homePage__questionColumn {
+    flex: 1;
+    display: flex; 
+    flex-direction: column;
+}
+
+
