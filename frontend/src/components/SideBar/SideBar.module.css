@@ -1,5 +1,5 @@
 .sideBar__container {
-    background: linear-gradient(#21d4fc, #a238fe);
+    background: linear-gradient(var(--gradient-blue), var(--gradient-purple));
     top: 0;
     display: flex;
     flex-direction: column;

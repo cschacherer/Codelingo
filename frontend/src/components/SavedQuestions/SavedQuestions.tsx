@@ -1,5 +1,5 @@
 import { SavedQuestion } from "../../models/questions";
-import "./SavedQuestions.css";
+import style from "./SavedQuestions.module.css";
 
 interface Props {
     savedQuestions: SavedQuestion[];
@@ -7,10 +7,10 @@ interface Props {
 
 const SavedQuestions = ({ savedQuestions }: Props) => {
     return (
-        <div className="container">
-            <div className="title gridItem">Saved Questions</div>
-            <table>
-                <thead>
+        <div className={style.savedQuestions__container}>
+            <div className={style.savedQuestions__title}>Saved Questions</div>
+            <table className={style.savedQuestions__table}>
+                <thead className={style.savedQuestions__colHeader}>
                     <tr>
                         <th scope="col">Category</th>
                         <th scope="col">Difficulty</th>
@@ -25,13 +25,13 @@ const SavedQuestions = ({ savedQuestions }: Props) => {
                     {savedQuestions?.map((item) => {
                         return (
                             <tr key={item.id}>
-                                <td>{item.category}</td>
-                                <td>{item.difficulty}</td>
-                                <td>{item.type}</td>
-                                <td>{item.question}</td>
-                                <td>{item.answer}</td>
-                                <td>{item.userAnswer}</td>
-                                <td>{item.notes}</td>
+                                <td width="auto">{item.category}</td>
+                                <td width="auto">{item.difficulty}</td>
+                                <td width="auto">{item.type}</td>
+                                <td width="25%">{item.question}</td>
+                                <td width="25%">{item.answer}</td>
+                                <td width="25%">{item.userAnswer}</td>
+                                <td width="25%">{item.notes}</td>
                             </tr>
                         );
                     })}

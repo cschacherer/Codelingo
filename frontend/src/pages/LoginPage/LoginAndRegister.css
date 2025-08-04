@@ -9,12 +9,17 @@
 
 html,
 body {
-    display: grid;
+    display: flex;
     height: 100%;
     width: 100%;
     place-items: center;
     background: #fff9f9;
-    /* background: linear-gradient(#21d4fc, #a238fe); */
+}
+
+#root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 ::selection {
@@ -24,9 +29,12 @@ body {
 
 .wrapper {
     width: 380px;
+    height: fit-content;
     background: #fff;
     border-radius: 15px;
     box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.1);
+    align-items: center;
+    justify-content: center;
 }
 
 .wrapper .title {
@@ -37,7 +45,7 @@ body {
     color: #fff;
     user-select: none;
     border-radius: 15px 15px 0 0;
-    background: linear-gradient(-135deg, #a238fe, #21d4fc);
+    background: linear-gradient(-135deg, var(--gradient-purple), var(--gradient-blue));
 }
 
 .wrapper form {

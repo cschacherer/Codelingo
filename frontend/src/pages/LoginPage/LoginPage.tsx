@@ -1,9 +1,9 @@
 import axios from "axios";
-import "./css/LoginAndRegister.css";
+import "./LoginAndRegister.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getErrorMessage } from "../utils/utils";
-import { useAuth } from "../context/authContext";
+import { getErrorMessage } from "../../utils/utils";
+import { useAuth } from "../../context/authContext";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("admin");

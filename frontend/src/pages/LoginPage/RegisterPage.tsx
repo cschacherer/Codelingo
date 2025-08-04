@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./css/LoginAndRegister.css";
-import { getErrorMessage } from "../utils/utils";
-import { useAuth } from "../context/authContext";
+import "./LoginAndRegister.css";
+import { getErrorMessage } from "../../utils/utils";
+import { useAuth } from "../../context/authContext";
 
 const RegisterPage = () => {
     const [username, setUsername] = useState("admin");

@@ -3,14 +3,22 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import userAvatar from "../../assets/user.png";
 import style from "./NavigationBar.module.css";
+import owlIcon from "../../assets/owlIcon.svg";
 
 interface Props {
     loggedIn: boolean;
+    onUserPage: boolean;
 }
 
-const NavigationBar = ({ loggedIn }: Props) => {
+const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
     return (
         <Navbar expand="lg" className={style.navigationBar__background}>
+            {onUserPage && (
+                <Navbar.Brand href="/" className={style.navigationBar__brand}>
+                    <img src={owlIcon} width="50" height="50" /> CodeLingo
+                </Navbar.Brand>
+            )}
+
             <Navbar.Collapse className={style.navigationBar__container}>
                 <Nav.Link className={style.navigationBar__link} href="/">
                     Home

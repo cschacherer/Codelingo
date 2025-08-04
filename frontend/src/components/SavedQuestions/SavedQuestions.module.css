@@ -1,0 +1,32 @@
+.savedQuestions__container {
+    display: flex;
+    flex-direction: column;
+    margin: 25px;
+
+}
+
+.savedQuestions__title {
+    font-size: 45px;
+    background: linear-gradient(-135deg, var(--gradient-purple), var(--gradient-blue));
+    padding: 0px 20px; 
+    border: 1px solid var(--darker-gray);
+}
+
+.savedQuestions__table {
+    line-height: 1.5;
+    text-align: start;
+}
+
+.savedQuestions__colHeader {
+    background-color: rgb(201, 201, 201)
+}
+
+td {
+    border: 1px solid var(--darker-gray);
+    padding: 0.25rem 0.75rem;
+}
+
+th{
+    border: 1px solid var(--darker-gray);
+    padding: 0.75rem 0.75rem;
+}

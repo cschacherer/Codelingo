@@ -3,18 +3,17 @@
 // import { Defaults } from "../defaults";
 
 import { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import QuestionContainer from "../components/QuestionContainer/QuestionContainer";
-import IQuestionOptions from "../components/IQuestionOptions";
-import SideBar from "../components/SideBar/SideBar";
-import owlIcon from "../assets/owlIcon.svg";
-import { Defaults } from "../utils/defaults";
-import { Category, Difficulty, Type } from "../utils/enumOptions";
-import style from "./css/HomePage.module.css";
-import { getErrorMessage } from "../utils/utils";
-import { useAuth } from "../context/authContext";
-import { generateQuestion, saveQuestion } from "../services/questionService";
-import NavigationBar from "../components/Navigation/NavigationBar";
+import QuestionContainer from "../../components/QuestionContainer/QuestionContainer";
+import IQuestionOptions from "../../components/IQuestionOptions";
+import SideBar from "../../components/SideBar/SideBar";
+import owlIcon from "../../assets/owlIcon.svg";
+import { Defaults } from "../../utils/defaults";
+import { Category, Difficulty, Type } from "../../utils/enumOptions";
+import style from "./HomePage.module.css";
+import { getErrorMessage } from "../../utils/utils";
+import { useAuth } from "../../context/authContext";
+import { generateQuestion, saveQuestion } from "../../services/questionService";
+import NavigationBar from "../../components/Navigation/NavigationBar";
 
 const HomePage = () => {
     let auth = useAuth();
@@ -151,7 +150,10 @@ const HomePage = () => {
                 ></SideBar>
             </div>
             <div className={style.homePage__questionColumn}>
-                <NavigationBar loggedIn={auth.loggedIn}></NavigationBar>
+                <NavigationBar
+                    loggedIn={auth.loggedIn}
+                    onUserPage={false}
+                ></NavigationBar>
                 <QuestionContainer
                     title="New Question"
                     question={question}

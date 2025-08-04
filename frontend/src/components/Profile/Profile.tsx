@@ -1,5 +1,5 @@
-import "./Profile.css";
-import icon from "../../assets/react.svg";
+import style from "./Profile.module.css";
+import userAvatar from "../../assets/user.png";
 
 interface Props {
     user: string;
@@ -9,17 +9,19 @@ interface Props {
 
 const Profile = ({ user, email }: Props) => {
     return (
-        <div className="profile">
-            <div className="container">
-                <div className="title gridItem">Profile</div>
-                <img className="avatar gridItem" src={icon}></img>
-                <div className="profileData gridItem">
-                    <div className="userData">
-                        <b>Username: </b>
+        <div className={style.profile__container}>
+            <div className={style.profile__title}>Profile</div>
+            <div className={style.profile__avatarUsernameContainer}>
+                <img className={style.profile__avatar} src={userAvatar}></img>
+                <div className={style.profile__data}>
+                    <div className={style.profile__dataItem}>
+                        <label className={style.profile__label}>
+                            Username:
+                        </label>
                         {user}
                     </div>
-                    <div className="userData">
-                        <b>Email: </b>
+                    <div className={style.profile__dataItem}>
+                        <label className={style.profile__label}>Email: </label>
                         {email}
                     </div>
                 </div>
