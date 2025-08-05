@@ -62,7 +62,7 @@ def createApp(testing=False):
     jwt = JWTManager(app)
 
     # LLM management
-    useOpenAI = True
+    useOpenAI = False
     if useOpenAI:
         communicator = openAI_LLM()
     else:

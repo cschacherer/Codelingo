@@ -2,12 +2,9 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import style from "./QuestionContainer.module.css";
 import { useState, useEffect } from "react";
-import { Container } from "react-bootstrap";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import ReactMarkdown from "react-markdown";
-import { saveQuestion } from "../../services/questionService";
-import { getErrorMessage } from "../../utils/utils";
 
 interface Props {
     title: string;
@@ -40,13 +37,14 @@ const QuestionContainer = ({
     const [formattedQuestion, setFormattedQuestion] = useState("");
     const [formattedAnswer, setFormattedAnswer] = useState("");
 
+    //change any line breaks to "  \n" so ReactMarkdown will read them as a line break
     function replaceNewLine(statement: string) {
         let correctNewLineStatement = statement;
-        if (answer.includes("\r\n")) {
+        if (statement.includes("\r\n")) {
             correctNewLineStatement = statement.replace(/\r?\n/g, "  \n");
-        } else if (question.includes("\n")) {
+        } else if (statement.includes("\n")) {
             correctNewLineStatement = statement.replace(/\n/g, "  \n");
-        } else if (question.includes("\\n")) {
+        } else if (statement.includes("\\n")) {
             correctNewLineStatement = statement.replace(/\\n/g, "  \n");
         }
         return correctNewLineStatement;
@@ -60,7 +58,12 @@ const QuestionContainer = ({
         setFormattedQuestion(correctNewLineQuestion);
 
         let correctNewLineAnswer = replaceNewLine(answer);
-        setFormattedAnswer(`\`\`\`  \n${correctNewLineAnswer}  \n \`\`\``);
+        ///the ``` will render the answer in code in ReactMarkdown
+        if (questionType == Type.Coding) {
+            setFormattedAnswer(`\`\`\`  \n${correctNewLineAnswer}  \n \`\`\``);
+        } else {
+            setFormattedAnswer(correctNewLineAnswer);
+        }
     }, [question, answer]);
 
     const handleShowAnswerClicked = () => {
@@ -71,6 +74,10 @@ const QuestionContainer = ({
         event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         setUserAnswer(event.target.value);
+    };
+
+    const handleUserAnswerChangeCode = (newValue: string) => {
+        setUserAnswer(newValue);
     };
 
     return (
@@ -94,7 +101,8 @@ const QuestionContainer = ({
                         </label>
                         <CodeEditor
                             questionCategory={questionCategory}
-                            answerText={userAnswer}
+                            userAnswer={userAnswer}
+                            handleUserAnswerChanged={handleUserAnswerChangeCode}
                         ></CodeEditor>
                     </div>
                 ) : (
@@ -114,20 +122,18 @@ const QuestionContainer = ({
                 )}
                 <div className={style.questionContainer__buttonContainer}>
                     <Button
-                        className={style.questionContainer__button}
+                        className={style.questionContainer__glowButton}
                         variant="light"
                         size="lg"
-                        id="showAnswerButton"
                         onClick={handleShowAnswerClicked}
                     >
                         {showAnswer ? "Hide Answer" : "Show Answer"}
                     </Button>
 
                     <Button
-                        className={style.questionContainer__button}
+                        className={style.questionContainer__glowButton}
                         variant="light"
                         size="lg"
-                        id="saveQuestionButton"
                         onClick={() =>
                             handleSaveQuestion(
                                 formattedQuestion,
@@ -135,9 +141,8 @@ const QuestionContainer = ({
                                 userAnswer
                             )
                         }
-                        disabled={isSaved}
                     >
-                        Save Question
+                        {isSaved ? "Saved Question" : "Save Question"}
                     </Button>
                 </div>
             </div>

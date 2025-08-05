@@ -35,13 +35,16 @@ const SideBar = ({
     loading,
 }: Props) => {
     return (
-        <Container className={`${style.sideBar__container}`} id="mainGroup">
+        <Container className={`${style.sideBar__container}`}>
             <h1>
-                <a className={style.sideBar__title} href="/" id="titleText">
+                <a className={style.sideBar__title} href="/">
                     CodeLingo
                 </a>
             </h1>
-            <img className={style.sideBar__image} src={icon} />
+            <a href="/">
+                <img className={style.sideBar__image} src={icon} />
+            </a>
+
             <GeneratePanel
                 options={options}
                 selectedCategory={selectedCategory}

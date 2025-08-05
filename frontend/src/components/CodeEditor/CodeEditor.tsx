@@ -1,5 +1,5 @@
 import { basicSetup } from "codemirror";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { EditorState, Compartment } from "@codemirror/state";
 import {
     EditorView,
@@ -47,12 +47,20 @@ import style from "./CodeEditor.module.css";
 
 interface Props {
     questionCategory: Category;
-    answerText: string;
+    userAnswer: string;
+    handleUserAnswerChanged: (newText: string) => void;
 }
 
-const CodeEditor = ({ questionCategory, answerText }: Props) => {
+const CodeEditor = ({
+    questionCategory,
+    userAnswer,
+    handleUserAnswerChanged,
+}: Props) => {
     const editorRef = useRef(null);
     const viewRef = useRef<EditorView>(null);
+
+    // const [userAnswer, setUserAnswer] = useState("");
+    // answerText = userAnswer;
 
     let language = new Compartment();
 
@@ -83,6 +91,11 @@ const CodeEditor = ({ questionCategory, answerText }: Props) => {
             extensions: [
                 basicSetup,
                 language.of(setLanguage(questionCategory)), //empty default language
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        handleUserAnswerChanged(update.state.doc.toString());
+                    }
+                }),
                 keymap.of([{ key: "Tab", run: acceptCompletion }]),
                 // A line number gutter
                 lineNumbers(),
@@ -157,18 +170,20 @@ const CodeEditor = ({ questionCategory, answerText }: Props) => {
         };
     }, [questionCategory]);
 
-    //clear text
+    //clear text even if question category hasn't changed
     useEffect(() => {
-        if (viewRef.current) {
-            viewRef.current.dispatch({
-                changes: {
-                    from: 0,
-                    to: viewRef.current.state.doc.length,
-                    insert: "",
-                },
-            });
+        if (userAnswer == "") {
+            if (viewRef.current) {
+                viewRef.current.dispatch({
+                    changes: {
+                        from: 0,
+                        to: viewRef.current.state.doc.length,
+                        insert: userAnswer,
+                    },
+                });
+            }
         }
-    }, [answerText]);
+    }, [userAnswer]);
 
     return <div ref={editorRef} className="codemirror-container"></div>;
 };

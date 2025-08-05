@@ -6,7 +6,7 @@
 }
 
 .savedQuestions__title {
-    font-size: 45px;
+    font-size: 35px;
     background: linear-gradient(-135deg, var(--gradient-purple), var(--gradient-blue));
     padding: 0px 20px; 
     border: 1px solid var(--darker-gray);
@@ -29,4 +29,8 @@ td {
 th{
     border: 1px solid var(--darker-gray);
     padding: 0.75rem 0.75rem;
+}
+
+.savedQuestions__button {
+    background-color: var(--gray-background);
 }

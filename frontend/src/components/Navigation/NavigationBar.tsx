@@ -4,6 +4,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import userAvatar from "../../assets/user.png";
 import style from "./NavigationBar.module.css";
 import owlIcon from "../../assets/owlIcon.svg";
+import { useAuth } from "../../context/authContext";
 
 interface Props {
     loggedIn: boolean;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
+    const auth = useAuth();
     return (
         <Navbar expand="lg" className={style.navigationBar__background}>
             {onUserPage && (
@@ -45,7 +47,10 @@ const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
                         <NavDropdown.Item href="/user">
                             Profile
                         </NavDropdown.Item>
-                        <NavDropdown.Item href="/logout">
+                        <NavDropdown.Item
+                            href="/"
+                            onClick={() => auth.logoutUser()}
+                        >
                             Logout
                         </NavDropdown.Item>
                     </NavDropdown>
