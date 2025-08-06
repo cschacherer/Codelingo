@@ -2,14 +2,16 @@ import { useState, useEffect } from "react";
 import QuestionContainer from "../../components/QuestionContainer/QuestionContainer";
 import SideBar from "../../components/SideBar/SideBar";
 import owlIcon from "../../assets/owlIcon.svg";
-import { Defaults } from "../../utils/defaults";
-import { Category, Difficulty, Type } from "../../utils/enumOptions";
-import style from "./HomePage.module.css";
+import { Defaults } from "../../utils/questionDefaults";
 import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
 import { generateQuestion, saveQuestion } from "../../services/questionService";
 import NavigationBar from "../../components/Navigation/NavigationBar";
-import { QuestionOptions } from "../../models/questions";
+import { QuestionOptions } from "../../models/QuestionOptions";
+import { Category } from "../../models/Category";
+import { Difficulty } from "../../models/Difficulty";
+import { Type } from "../../models/Type";
+import style from "./HomePage.module.css";
 
 const HomePage = () => {
     let auth = useAuth();

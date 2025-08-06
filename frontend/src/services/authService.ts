@@ -1,5 +1,5 @@
 import { getErrorMessage } from "../utils/utils";
-import { UserToken } from "../models/user";
+import { UserToken } from "../models/UserToken";
 import apiClient from "./apiClient";
 
 export const login = async (username: string, password: string) => {
@@ -48,7 +48,7 @@ export const requestPasswordReset = async (email: string) => {
     }
 };
 
-export const passwordReset = async (token: string, newPassword: string) => {
+export const resetPassword = async (token: string, newPassword: string) => {
     try {
         const response = await apiClient.post("/password/reset/request", {
             token: token,

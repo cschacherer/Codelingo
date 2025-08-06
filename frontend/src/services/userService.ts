@@ -1,5 +1,5 @@
 import { getErrorMessage } from "../utils/utils";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import apiClient from "./apiClient";
 
 export const getUser = async () => {

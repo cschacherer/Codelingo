@@ -4,7 +4,7 @@ import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
 import ChangePassword from "../../components/ChangePassword/ChangePassword";
 import sharedStyle from "../../Forms.module.css";
-import { passwordReset } from "../../services/authService";
+import { resetPassword } from "../../services/authService";
 
 const ResetPasswordPage = () => {
     let { token } = useParams<string>();
@@ -29,7 +29,7 @@ const ResetPasswordPage = () => {
             if (auth.loggedIn) {
                 navigate("/user");
             }
-            const response = await passwordReset(token, newPassword);
+            const response = await resetPassword(token, newPassword);
             setSuccessMessage(
                 `${response.message}. Redirecting you back to the login page...`
             );
