@@ -1,18 +1,14 @@
 # Importing flask module in the project is mandatory
 # An object of Flask class is our WSGI application.
+import os
+import json
 from flask import (
     Flask,
-    send_from_directory,
     jsonify,
     request,
-    render_template,
-    abort,
-    redirect,
-    url_for,
 )
 from LLMs.groq_LLM import Groq_LLM
 from LLMs.openAI_LLM import openAI_LLM
-import json
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import (
@@ -29,7 +25,8 @@ from database.models import SavedQuestion
 from database.databaseSeeder import DatabaseSeeder
 from dotenv import load_dotenv
 from datetime import timedelta
-import os
+from itsdangerous.url_safe import URLSafeTimedSerializer
+from flask_mail import Mail, Message
 
 
 def createApp(testing=False):
@@ -37,6 +34,7 @@ def createApp(testing=False):
     app = Flask(__name__)
     CORS(app, supports_credentials=True)
 
+    # region Configuration
     app.config.from_object(Config)
 
     # testing
@@ -48,6 +46,7 @@ def createApp(testing=False):
 
     load_dotenv()
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+    app.config["WEBSITE_BASE_URL"] = "http://localhost:5173"
 
     # database management
     DatabaseConfig(app)
@@ -61,6 +60,16 @@ def createApp(testing=False):
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(weeks=1)
     jwt = JWTManager(app)
 
+    # mail
+    app.config["MAIL_SERVER"] = "smtp.gmail.com"
+    app.config["MAIL_PORT"] = 587
+    app.config["MAIL_USE_TLS"] = True
+    app.config["MAIL_USE_SSL"] = False
+    app.config["MAIL_USERNAME"] = os.environ.get("CODELINGO_EMAIL_ADDRESS")
+    app.config["MAIL_PASSWORD"] = os.environ.get("CODELINGO_EMAIL_PASSWORD")
+    app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("CODELINGO_EMAIL_ADDRESS")
+    mail = Mail(app)
+
     # LLM management
     useOpenAI = False
     if useOpenAI:
@@ -68,63 +77,20 @@ def createApp(testing=False):
     else:
         communicator = Groq_LLM()
 
-    # The route() function of the Flask class is a decorator,
-    # which tells the application which URL should call
-    # the associated function.
-    @app.route("/")
-    def homePage():
-        category = "Python"
-        difficulty = "Hard"
-        type = "Coding"
-        response = communicator.generateQuestion(category, difficulty, type)
-        return (
-            jsonify(
-                category=category,
-                difficulty=difficulty,
-                type=type,
-                question=response,
-            ),
-            200,
-        )
+    # endregion
 
-    @app.route("/generate_question", methods=["POST"])
-    def generateQuestion():
-        data = request.get_json()
-        category = data.get("category")
-        difficulty = data.get("difficulty")
-        type = data.get("type")
-        questionData = communicator.generateQuestion(category, difficulty, type)
-        parsedJsonData = json.loads(questionData)
-
-        # Handle case-insensitive keys safely
-        keys_lower = {k.lower(): v for k, v in parsedJsonData.items()}
-        question = (
-            keys_lower.get("question")
-            or f"Error parsing the question from the LLM response. {parsedJsonData}"
-        )
-        answer = (
-            keys_lower.get("answer")
-            or f"Error parsing the answer from the LLM response. {parsedJsonData}"
-        )
-
-        return (
-            jsonify(
-                category=category,
-                difficulty=difficulty,
-                type=type,
-                question=question,
-                answer=answer,
-            ),
-            200,
-        )
+    # region Login and Register Functions
 
     @app.route("/login", methods=["POST"])
     def login():
         data = request.get_json()
         username = data.get("username")
         password = data.get("password")
-        if username == None or password == None:
-            return jsonify(message="Username or password cannot be missing"), 400
+        if not username or not password:
+            return (
+                jsonify(message="Username or password cannot be missing"),
+                400,
+            )
 
         user = User.query.filter_by(username=username).first()
         if user:
@@ -150,7 +116,7 @@ def createApp(testing=False):
         username = data.get("username")
         password = data.get("password")
         email = data.get("email")
-        if username == None or password == None:
+        if not username or not password:
             return jsonify(message="Username or password cannot be missing"), 400
         existingUser = User.query.filter_by(username=username).first()
         if existingUser:
@@ -170,18 +136,22 @@ def createApp(testing=False):
             200,
         )
 
-    @app.route("/refresh", methods=["POST"])
+    @app.route("/token/refresh", methods=["POST"])
     @jwt_required(refresh=True)
     def refreshAccessToken():
         currentUserId = get_jwt_identity()
         newAccessToken = create_access_token(str(currentUserId))
         return jsonify(accessToken=newAccessToken)
 
+    # endregion
+
+    # region User Functions
+
     @app.route("/users", methods=["GET"])
     @jwt_required()
     def getAllUsers():
         users = User.query.all()
-        if len(users) == 0:
+        if not users:
             return jsonify(message="No users found"), 404
         return jsonify(users=[user.to_dict() for user in users]), 200
 
@@ -220,7 +190,7 @@ def createApp(testing=False):
         if newUsername:
             user.username = newUsername
         if newPassword:
-            user.password = newPassword
+            user.changePassword(plainTextPassword=newPassword)
         if newEmail:
             user.email = newEmail
         db.session.commit()
@@ -240,7 +210,145 @@ def createApp(testing=False):
         newUsers = User.query.all()
         return jsonify(users=[user.to_dict() for user in newUsers]), 200
 
-    @app.route("/questions", methods=["POST"])
+    # endregion
+
+    # region Reset Password Functions
+    def getResetToken(email):
+        serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        return serializer.dumps({"email": email})
+
+    def verifyResetToken(
+        token, expiration=1800
+    ):  # 1800 seconds means it expires after 30 minutes
+        serializer = URLSafeTimedSerializer(
+            app.config["SECRET_KEY"], max_age=expiration
+        )
+        try:
+            data = serializer.loads(token, max_age=expiration)
+            email = data["email"]
+            return email
+        except:
+            return None
+
+    @app.route("/password/reset/request", methods=["POST"])
+    def sendRequestResetEmail():
+        data = request.get_json()
+        recipientEmail = data.get("email")
+        if not recipientEmail:
+            return jsonify(message="The email address cannot be missing"), 400
+        user = User.query.filter_by(email=recipientEmail).first()
+        if not user:
+            return jsonify(message="Email not found within our user database."), 404
+
+        try:
+            print(app.config["MAIL_USERNAME"])
+            print(app.config["MAIL_PASSWORD"])
+            token = getResetToken(recipientEmail)
+
+            resetLink = f"{app.config["WEBSITE_BASE_URL"]}/reset_password/{token}"
+
+            msg = Message(
+                "CodeLingo Reset Password",
+                recipients=[recipientEmail],
+                sender=app.config["MAIL_DEFAULT_SENDER"],
+            )
+            msg.body = f"""To reset your password, visit the following link: {resetLink}
+
+            If you did not make this request, then ignore this email and no changes will be made.
+
+            """
+            mail.send(msg)
+
+        except Exception as e:
+            msg = f"Error sending password reset email. {e}"
+            return jsonify(message=msg), 400
+
+        return (
+            jsonify(
+                message="An email has been sent with instructions to reset your password."
+            ),
+            200,
+        )
+
+    @app.route("/password/reset", methods=["POST"])
+    def resetPassword(token):
+        data = request.get_json()
+        token = data.get("token")
+        newPassword = data.get("newPassword")
+        if not token or not newPassword:
+            return (
+                jsonify(
+                    message="The password reset token or new password cannot be missing"
+                ),
+                400,
+            )
+
+        email = verifyResetToken(token)
+        if not email:
+            return jsonify(message="Invalid or expired token"), 400
+
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            return (
+                jsonify(message="Email is not associated with any existing user."),
+                404,
+            )
+
+        user.changePassword(plainTextPassword=newPassword)
+        db.session.commit()
+        return jsonify(messge="Password updated successfully"), 200
+
+    # endregion
+
+    # region Questions
+    @app.route("/questions", methods=["GET"])
+    @jwt_required()
+    def getAllQuestions():
+        currentUserId = get_jwt_identity()
+        questions = SavedQuestion.query.filter_by(userId=currentUserId).all()
+        if not questions:
+            return jsonify(message=f"Questions for user were not found"), 404
+        return jsonify(question=[q.to_dict() for q in questions]), 200
+
+    @app.route("/questions/generate", methods=["POST"])
+    def generateQuestion():
+        data = request.get_json()
+        category = data.get("category")
+        difficulty = data.get("difficulty")
+        type = data.get("type")
+        if not category or not difficulty or not type:
+            return (
+                jsonify(
+                    message="The category, difficulty, or type for the question cannot be missing"
+                ),
+                400,
+            )
+        questionData = communicator.generateQuestion(category, difficulty, type)
+        parsedJsonData = json.loads(questionData)
+
+        # Handle case-insensitive keys safely
+        keys_lower = {k.lower(): v for k, v in parsedJsonData.items()}
+        question = (
+            keys_lower.get("question")
+            or f"Error parsing the question from the LLM response. {parsedJsonData}"
+        )
+        answer = (
+            keys_lower.get("answer")
+            or f"Error parsing the answer from the LLM response. {parsedJsonData}"
+        )
+
+        return (
+            jsonify(
+                category=category,
+                difficulty=difficulty,
+                type=type,
+                question=question,
+                answer=answer,
+            ),
+            200,
+        )
+
+    @app.route("/questions/save", methods=["POST"])
     @jwt_required()
     def saveQuestion():
         currentUserId = get_jwt_identity()
@@ -248,6 +356,12 @@ def createApp(testing=False):
         if not user:
             return jsonify(message="User not found"), 404
         data = request.get_json()
+
+        # if id already exists, delete it to override saving an existing question
+        id = data.get("id")
+        if id != -1:
+            db.session.delete(id=id)
+
         question = SavedQuestion(
             category=data.get("category"),
             difficulty=data.get("difficulty"),
@@ -262,15 +376,6 @@ def createApp(testing=False):
         db.session.commit()
         return jsonify(question=question.to_dict()), 201
 
-    @app.route("/questions", methods=["GET"])
-    @jwt_required()
-    def getAllQuestions():
-        currentUserId = get_jwt_identity()
-        questions = SavedQuestion.query.filter_by(userId=currentUserId).all()
-        if not questions:
-            return jsonify(message=f"Questions for user were not found"), 404
-        return jsonify(question=[q.to_dict() for q in questions]), 200
-
     @app.route("/questions/<questionId>", methods=["GET"])
     @jwt_required()
     def loadQuestion(questionId):
@@ -282,6 +387,8 @@ def createApp(testing=False):
         if not question:
             return jsonify(message="No question found."), 404
         return jsonify(question=question.to_dict()), 200
+
+    # endregion
 
     return app
 

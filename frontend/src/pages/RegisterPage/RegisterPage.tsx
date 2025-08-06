@@ -1,44 +1,38 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
 import sharedStyle from "../../Forms.module.css";
-import style from "./LoginPage.module.css";
+import style from "./RegisterPage.module.css";
 
-const LoginPage = () => {
+const RegisterPage = () => {
     const [username, setUsername] = useState("admin");
     const [password, setPassword] = useState("admin123");
+    const [email, setEmail] = useState("something@gmail.com");
     const [error, setError] = useState("");
 
     const auth = useAuth();
     const navigate = useNavigate();
 
-    const login = async () => {
+    const register = async () => {
         try {
-            auth.loginUser(username, password);
+            auth.registerUser(username, password, email);
             navigate("/");
         } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.status === 401) {
-                setError("You're username or password were incorrect.");
-            } else {
-                let msg = getErrorMessage(err);
-                setError(`Error logging in. ${msg}`);
-            }
-            setUsername("");
-            setPassword("");
+            let msg = getErrorMessage(err);
+            setError(`Error registering user. ${msg}`);
         }
     };
 
     return (
         <div className={sharedStyle.form__body}>
             <div className={sharedStyle.form__container}>
-                <div className={sharedStyle.form__title}>Login Form</div>
+                <div className={sharedStyle.form__title}>Register Form</div>
                 <form
                     className={sharedStyle.form__form}
                     onSubmit={(e) => {
                         e.preventDefault();
-                        login();
+                        register();
                     }}
                 >
                     <div className={sharedStyle.form__inputField}>
@@ -65,34 +59,26 @@ const LoginPage = () => {
                             Password
                         </label>
                     </div>
-                    <div className={style.loginForm__extraContent}>
-                        <div className={style.loginForm__rememberMeCheckBox}>
-                            <input
-                                className={style.loginForm__rememberMeInput}
-                                type="checkbox"
-                                id="remember-me"
-                            />
-                            <label
-                                className={style.loginForm__rememberMeLabel}
-                                htmlFor="remember-me"
-                            >
-                                Remember me
-                            </label>
-                        </div>
-                        <div>
-                            <a
-                                className={sharedStyle.form__link}
-                                href="/password/reset"
-                            >
-                                Forgot password?
-                            </a>
-                        </div>
+                    <div className={sharedStyle.form__inputField}>
+                        <input
+                            className={
+                                email
+                                    ? `${sharedStyle.form__inputField__input} ${sharedStyle.form__inputFieldEmail__hasContent}`
+                                    : `${sharedStyle.form__inputField__input}`
+                            }
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <label className={sharedStyle.form__inputFieldLabel}>
+                            Email (Optional)
+                        </label>
                     </div>
                     <div className={sharedStyle.form__inputField}>
                         <input
                             className={`${sharedStyle.form__inputField__input} ${sharedStyle.form__submitButton}`}
                             type="submit"
-                            value="Login"
+                            value="Register"
                         />
                     </div>
                     {error && (
@@ -100,11 +86,10 @@ const LoginPage = () => {
                             <p>{error}</p>
                         </div>
                     )}
-
-                    <div className={style.loginForm__signUpContent}>
-                        Not a member?{" "}
-                        <a className={sharedStyle.form__link} href="/register">
-                            Sign up now
+                    <div className={style.registerForm__loginContent}>
+                        Already a member?{" "}
+                        <a className={sharedStyle.form__link} href="/login">
+                            Login now
                         </a>
                     </div>
                 </form>
@@ -113,4 +98,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

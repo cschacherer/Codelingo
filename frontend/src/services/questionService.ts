@@ -15,7 +15,7 @@ export const generateQuestion = async (
             type: type,
         };
         const response = await apiClient.post<Question>(
-            "/generate_question",
+            "/questions/generate",
             parameters
         );
         return response.data;
@@ -27,6 +27,7 @@ export const generateQuestion = async (
 };
 
 export const saveQuestion = async (
+    id: number,
     category: Category,
     difficulty: Difficulty,
     type: Type,
@@ -37,6 +38,7 @@ export const saveQuestion = async (
 ) => {
     try {
         const questionData = {
+            id: id,
             category: category,
             difficulty: difficulty,
             type: type,
@@ -46,7 +48,7 @@ export const saveQuestion = async (
             notes: notes,
         };
         const response = await apiClient.post<SavedQuestion>(
-            "/questions",
+            "/questions/save",
             questionData
         );
         return response.data;

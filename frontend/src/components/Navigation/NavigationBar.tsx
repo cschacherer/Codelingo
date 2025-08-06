@@ -37,23 +37,35 @@ const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
                     </Nav.Link>
                 )}
                 {loggedIn && (
-                    <NavDropdown
-                        align="end"
-                        className={style.navigationBar__link}
-                        title={
-                            <img src={userAvatar} width="25" height="25"></img>
-                        }
-                    >
-                        <NavDropdown.Item href="/user">
-                            Profile
-                        </NavDropdown.Item>
-                        <NavDropdown.Item
-                            href="/"
-                            onClick={() => auth.logoutUser()}
+                    <>
+                        <Nav.Link
+                            className={style.navigationBar__link}
+                            href="/questions/saved"
                         >
-                            Logout
-                        </NavDropdown.Item>
-                    </NavDropdown>
+                            Saved Questions
+                        </Nav.Link>
+                        <NavDropdown
+                            align="end"
+                            className={style.navigationBar__link}
+                            title={
+                                <img
+                                    src={userAvatar}
+                                    width="25"
+                                    height="25"
+                                ></img>
+                            }
+                        >
+                            <NavDropdown.Item href="/user">
+                                Profile
+                            </NavDropdown.Item>
+                            <NavDropdown.Item
+                                href="/"
+                                onClick={() => auth.logoutUser()}
+                            >
+                                Logout
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                    </>
                 )}
             </Navbar.Collapse>
         </Navbar>

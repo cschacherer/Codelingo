@@ -1,12 +1,12 @@
 import Button from "react-bootstrap/Button";
 import Dropdown from "../Dropdown/Dropdown";
 import Container from "react-bootstrap/Container";
-import IQuestionOptions from "../IQuestionOptions";
 import style from "./GeneratePanel.module.css";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
+import { QuestionOptions } from "../../models/questions";
 
 interface Props {
-    options: IQuestionOptions;
+    options: QuestionOptions;
     selectedCategory: Category;
     selectedDifficulty: Difficulty;
     selectedType: Type;

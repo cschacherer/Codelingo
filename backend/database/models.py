@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import ForeignKey
+from itsdangerous import TimedSerializer
 
 
 @dataclass
@@ -20,6 +21,9 @@ class User(db.Model, UserMixin):
 
     def checkPassword(self, plainTextPassword):
         return check_password_hash(self.password, plainTextPassword)
+
+    def changePassword(self, plainTextPassword):
+        self.password = generate_password_hash(plainTextPassword)
 
     # compare values between two questions, except for id
     # used when testing that a question has actually been committed and saved to the database

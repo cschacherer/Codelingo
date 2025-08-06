@@ -34,3 +34,30 @@ export const register = async (
         throw new Error(msg);
     }
 };
+
+export const requestPasswordReset = async (email: string) => {
+    try {
+        const response = await apiClient.post("/password/reset/request", {
+            email: email,
+        });
+        return response.data;
+    } catch (error) {
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
+    }
+};
+
+export const passwordReset = async (token: string, newPassword: string) => {
+    try {
+        const response = await apiClient.post("/password/reset/request", {
+            token: token,
+            newPassword: newPassword,
+        });
+        return response.data;
+    } catch (error) {
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
+    }
+};

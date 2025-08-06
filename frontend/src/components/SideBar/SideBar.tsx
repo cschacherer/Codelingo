@@ -1,13 +1,13 @@
 import GeneratePanel from "../GeneratePanel/GeneratePanel";
-import IQuestionOptions from "../IQuestionOptions";
 import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import { Container } from "react-bootstrap";
 import style from "./SideBar.module.css";
+import { QuestionOptions } from "../../models/questions";
 
 interface Props {
     name: string;
     icon: string;
-    options: IQuestionOptions;
+    options: QuestionOptions;
     selectedCategory: Category;
     selectedDifficulty: Difficulty;
     selectedType: Type;

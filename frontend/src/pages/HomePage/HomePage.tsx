@@ -1,10 +1,5 @@
-// import Container from "react-bootstrap/Container";
-// import IQuestionInterface from "../components/IQuestionOptions";
-// import { Defaults } from "../defaults";
-
 import { useState, useEffect } from "react";
 import QuestionContainer from "../../components/QuestionContainer/QuestionContainer";
-import IQuestionOptions from "../../components/IQuestionOptions";
 import SideBar from "../../components/SideBar/SideBar";
 import owlIcon from "../../assets/owlIcon.svg";
 import { Defaults } from "../../utils/defaults";
@@ -14,6 +9,7 @@ import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
 import { generateQuestion, saveQuestion } from "../../services/questionService";
 import NavigationBar from "../../components/Navigation/NavigationBar";
+import { QuestionOptions } from "../../models/questions";
 
 const HomePage = () => {
     let auth = useAuth();
@@ -24,6 +20,7 @@ const HomePage = () => {
     const [answer, setAnswer] = useState("");
 
     //these variables are updated when the dropdown selection changes
+    //These are the default question values when the home page is first loaded
     const [selectedCategory, setSelectedCategory] = useState(Category.Python);
     const [selectedDifficulty, setSelectedDifficulty] = useState(
         Difficulty.Easy
@@ -41,6 +38,7 @@ const HomePage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [questionIsSaved, setQuestionIsSaved] = useState(false);
+    const [currentQuestionId, setCurrentQuestionId] = useState<number>(-1);
 
     const generateQuestionFunction = async (
         category: Category,
@@ -86,7 +84,11 @@ const HomePage = () => {
         userAnswer: string
     ) => {
         try {
+            if (currentQuestionId !== -1) {
+                //ask to override question
+            }
             const data = await saveQuestion(
+                currentQuestionId,
                 selectedCategory,
                 selectedDifficulty,
                 selectedType,
@@ -96,6 +98,7 @@ const HomePage = () => {
                 ""
             );
             setQuestionIsSaved(true);
+            setCurrentQuestionId(data.id);
         } catch (err) {
             let msg = getErrorMessage(err);
             console.log(msg);
@@ -115,7 +118,7 @@ const HomePage = () => {
         setSelectedType(newValue);
     };
 
-    const questionOptions: IQuestionOptions = {
+    const questionOptions: QuestionOptions = {
         categoryLabel: "Categories",
         categoryOptions: Object.values(Category) as Category[],
         difficultyLabel: "Difficulty",

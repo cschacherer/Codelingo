@@ -36,7 +36,7 @@ apiClient.interceptors.response.use(
             originalRequest._retry = true; //mark the request as retried to avoid infinite loops
             try {
                 const refreshToken = tokenStorage.getRefreshToken();
-                const refreshResponse = await apiClient.post("/refresh", {
+                const refreshResponse = await apiClient.post("/token/refresh", {
                     refreshToken,
                 });
 

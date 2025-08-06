@@ -1,3 +1,5 @@
+import { Category } from "../utils/enumOptions";
+
 export type Question = {
     category: string;
     difficulty: string;
@@ -16,4 +18,13 @@ export type SavedQuestion = {
     userAnswer: string;
     notes: string;
     userId: number;
+};
+
+export type QuestionOptions = {
+    categoryLabel: string;
+    categoryOptions: Category[];
+    difficultyLabel: string;
+    difficultyOptions: string[];
+    typeLabel: string;
+    typeOptions: string[];
 };

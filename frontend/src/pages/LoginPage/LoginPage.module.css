@@ -1,0 +1,32 @@
+.loginForm__extraContent {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.loginForm__rememberMeCheckBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginForm__rememberMeInput {
+    width: 15px;
+    height: 15px;
+    background: red;
+}
+
+.loginForm__rememberMeLabel {
+    color: #262626;
+    user-select: none;
+    padding-left: 5px;
+}
+
+.loginForm__signUpContent {
+    color: #262626;
+    margin-top: 20px;
+    text-align: center;
+}
