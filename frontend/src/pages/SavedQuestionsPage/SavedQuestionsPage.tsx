@@ -1,4 +1,4 @@
-import { SavedQuestion } from "../../models/questions";
+import { SavedQuestion } from "../../models/SavedQuestion";
 import { Button } from "react-bootstrap";
 import style from "./SavedQuestionsPage.module.css";
 import { useEffect, useState } from "react";

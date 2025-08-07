@@ -6,18 +6,19 @@
 .questionContainer__questionHeader {
     margin: 0px;
     padding: 0px;
+    font-size: 2.5rem;
 }
 
 .questionContainer__questionText {
     color: black;
-    font-size: large;
+    font-size: 1.1rem;
     white-space: pre-wrap;
     word-break: break-word;
     margin-top: 15px;
 }
 
 .questionContainer__userAnswerLabel {
-    font-size:x-large;
+    font-size:2rem;
     font-weight:600;
 }
 
@@ -49,20 +50,21 @@
     filter: blur(5px);
     width: calc(100% + 4px);
     height: calc(100% + 4px);
-    animation: glowing 15s linear infinite;
+    animation: glowing 40s linear infinite; 
     opacity: 0;
     transition: opacity .3s ease-in-out;
     border-radius: 10px;
 }
 
 .questionContainer__glowButton:active {
-    background-color: var(--darker-gray); 
-    opacity: .5;
+    /* background-color: var(--darker-gray); 
+    opacity: .5; */
+    transform: scale(0.95);
 }
 
 .questionContainer__glowButton:active:after {
-    background-color: var(--darker-gray);
-    opacity: .5;
+    /* background-color: var(--darker-gray);
+    opacity: .5; */
 }
 
 .questionContainer__glowButton:hover:before {
@@ -108,7 +110,7 @@
 
 .questionContainer__answerText {
     color: black;
-    font-size: large;
+    font-size: 1.2rem;
     white-space: pre-wrap;
     word-break: break-word;
     margin: 15px;

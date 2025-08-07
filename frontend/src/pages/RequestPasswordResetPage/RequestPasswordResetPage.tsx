@@ -5,6 +5,7 @@ import { useAuth } from "../../context/authContext";
 import { requestPasswordReset } from "../../services/authService";
 import sharedStyle from "../../Forms.module.css";
 import style from "./RequestPasswordResetPage.module.css";
+import { validateEmailAddress } from "../../utils/utils";
 
 const RequestPasswordResetPage = () => {
     const [email, setEmail] = useState("");
@@ -16,9 +17,13 @@ const RequestPasswordResetPage = () => {
 
     const resetPassword = async () => {
         try {
-            //don't let user change their password if they are not logged in
+            //don't let user reset their password if they are already logged in
             if (auth.loggedIn) {
                 navigate("/user");
+                return;
+            }
+            if (!validateEmailAddress(email)) {
+                setError("Invalid email address");
                 return;
             }
             const response = await requestPasswordReset(email);

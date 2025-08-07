@@ -13,7 +13,7 @@
 .dropdown__lableText {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 25px;
+    font-size: 1.5rem;
     text-align: right; 
     margin: 0px;     
 }
@@ -22,6 +22,8 @@
     font-family: Arial, Helvetica, sans-serif;
     text-align: left;
     width: 100%;
+    min-width: fit-content;
+    max-width: 350px;
     display: flex; 
     justify-content: space-between;
     align-items: center;

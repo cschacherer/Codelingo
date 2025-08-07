@@ -20,12 +20,12 @@ const Dropdown = ({
     changeSelectedItem,
 }: Props) => {
     return (
-        <Container className="dropdown__container">
-            <Row className={`${styles.dropdown__row}`}>
-                <Col className={`${styles.dropdown__lableColumn}`}>
-                    <h1 className={`${styles.dropdown__lableText}`}>{title}</h1>
+        <Container>
+            <Row className={styles.dropdown__row}>
+                <Col className={styles.dropdown__lableColumn}>
+                    <h1 className={styles.dropdown__lableText}>{title}</h1>
                 </Col>
-                <Col>
+                <Col className={styles.dropdown__dropdownColumn}>
                     <div className="dropdown">
                         <button
                             className={`btn btn-light dropdown-toggle ${styles.dropdown__dropdownButton}`}

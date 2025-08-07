@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { login, register } from "../services/authService";
 import { getErrorMessage } from "../utils/utils";
 import React from "react";
@@ -61,7 +60,7 @@ export const AuthProvider = ({ children }: Props) => {
             tokenStorage.setTokens(response.accessToken, response.refreshToken);
         } catch (error) {
             let msg = getErrorMessage(error);
-            console.log(msg);
+            throw new Error(msg);
         }
     };
 
@@ -71,12 +70,17 @@ export const AuthProvider = ({ children }: Props) => {
             tokenStorage.setTokens(response.accessToken, response.refreshToken);
         } catch (error) {
             let msg = getErrorMessage(error);
-            console.log(msg);
+            throw new Error(msg);
         }
     };
 
     const logoutUser = () => {
-        tokenStorage.clearTokens();
+        try {
+            tokenStorage.clearTokens();
+        } catch (error) {
+            let msg = getErrorMessage(error);
+            throw new Error(msg);
+        }
     };
 
     return (

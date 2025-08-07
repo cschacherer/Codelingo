@@ -30,7 +30,7 @@ import {
     acceptCompletion,
 } from "@codemirror/autocomplete";
 import { lintKeymap } from "@codemirror/lint";
-import { Category } from "../../utils/enumOptions";
+import { Category } from "../../models/Category";
 //supported langugages
 import { angular } from "@codemirror/lang-angular";
 import { css } from "@codemirror/lang-css";
@@ -42,8 +42,6 @@ import { php } from "@codemirror/lang-php";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { vue } from "@codemirror/lang-vue";
-
-import style from "./CodeEditor.module.css";
 
 interface Props {
     questionCategory: Category;
@@ -58,9 +56,6 @@ const CodeEditor = ({
 }: Props) => {
     const editorRef = useRef(null);
     const viewRef = useRef<EditorView>(null);
-
-    // const [userAnswer, setUserAnswer] = useState("");
-    // answerText = userAnswer;
 
     let language = new Compartment();
 

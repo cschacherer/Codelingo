@@ -16,7 +16,7 @@ const LoginPage = () => {
 
     const login = async () => {
         try {
-            auth.loginUser(username, password);
+            await auth.loginUser(username, password);
             navigate("/");
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 401) {
@@ -82,7 +82,7 @@ const LoginPage = () => {
                         <div>
                             <a
                                 className={sharedStyle.form__link}
-                                href="/password/reset"
+                                href="/password/reset/request"
                             >
                                 Forgot password?
                             </a>

@@ -12,10 +12,21 @@
 
 .navigationBar__link {
     margin: 15px;
-    font-size: 20px;
+    font-size: 1.4rem;
+}
+
+.navigationBar__dropdownLink {
+    font-size: 1.2rem;
 }
 
 .navigationBar__brand {
-    font-size: 30px;
+    font-size: 2rem;
     margin-left: 25px;
+}
+
+.navigationBar__icon {
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 0px;
 }

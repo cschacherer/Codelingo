@@ -3,7 +3,7 @@ import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import userAvatar from "../../assets/user.png";
 import style from "./NavigationBar.module.css";
-import owlIcon from "../../assets/owlIcon.svg";
+import owlIcon from "../../assets/owlIcon.png";
 import { useAuth } from "../../context/authContext";
 
 interface Props {
@@ -17,7 +17,8 @@ const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
         <Navbar expand="lg" className={style.navigationBar__background}>
             {onUserPage && (
                 <Navbar.Brand href="/" className={style.navigationBar__brand}>
-                    <img src={owlIcon} width="50" height="50" /> CodeLingo
+                    <img src={owlIcon} className={style.navigationBar__icon} />{" "}
+                    CodeLingo
                 </Navbar.Brand>
             )}
 
@@ -55,10 +56,14 @@ const NavigationBar = ({ loggedIn, onUserPage }: Props) => {
                                 ></img>
                             }
                         >
-                            <NavDropdown.Item href="/user">
+                            <NavDropdown.Item
+                                className={style.navigationBar__dropdownLink}
+                                href="/user"
+                            >
                                 Profile
                             </NavDropdown.Item>
                             <NavDropdown.Item
+                                className={style.navigationBar__dropdownLink}
                                 href="/"
                                 onClick={() => auth.logoutUser()}
                             >

@@ -29,11 +29,16 @@ apiClient.interceptors.response.use(
         return response; //if there are no errors, just return the response as normal
     },
     async (error) => {
+        const originalRequest = error.config;
+
+        //if the error appears from calling POST token/refresh below, we reject the promise to
+        //prevent infinite error looping when token/refresh doesn't work and returns an error
+        if ((originalRequest.url = "/token/refresh"))
+            return Promise.reject(error);
+
         //check to see if it is a 401 error, which indicates an expired access token
         //and we want to automatically refresh it
-        const originalRequest = error.config;
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; //mark the request as retried to avoid infinite loops
+        if (error.response?.status === 401) {
             try {
                 const refreshToken = tokenStorage.getRefreshToken();
                 const refreshResponse = await apiClient.post("/token/refresh", {
@@ -55,7 +60,7 @@ apiClient.interceptors.response.use(
                     `Token refresh failed. ${getErrorMessage(refreshError)}`
                 );
                 tokenStorage.clearTokens();
-                return Promise.reject(refreshError);
+                return Promise.reject(error);
             }
         }
         console.log(`Request config error. ${getErrorMessage(error)}`);

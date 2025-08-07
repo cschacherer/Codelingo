@@ -1,22 +1,26 @@
+.sideBar__background {
+    background-image: linear-gradient(var(--gradient-blue), var(--gradient-purple));
+    height: 100%;   
+}
+
 .sideBar__container {
-    background: linear-gradient(var(--gradient-blue), var(--gradient-purple));
-    top: 0;
+    position: sticky;
+    top: 20%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center; 
     align-items: center;
-    height: 100%;
+    overflow: hidden;
 }
 
 .sideBar__title {
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 70px;
-    margin: 5;
+    font-size: 5rem; 
     text-decoration: none;
 }
 
 .sideBar__image {
-    height: 200px;
-    width: 200px
+    height: 13em;
+    width: 13em;
 }

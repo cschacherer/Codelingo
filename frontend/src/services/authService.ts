@@ -50,7 +50,7 @@ export const requestPasswordReset = async (email: string) => {
 
 export const resetPassword = async (token: string, newPassword: string) => {
     try {
-        const response = await apiClient.post("/password/reset/request", {
+        const response = await apiClient.post("/password/reset", {
             token: token,
             newPassword: newPassword,
         });

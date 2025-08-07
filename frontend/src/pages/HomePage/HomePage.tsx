@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import QuestionContainer from "../../components/QuestionContainer/QuestionContainer";
 import SideBar from "../../components/SideBar/SideBar";
-import owlIcon from "../../assets/owlIcon.svg";
+import owlIcon from "../../assets/owlIcon.png";
 import { Defaults } from "../../utils/questionDefaults";
 import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
@@ -16,7 +16,7 @@ import style from "./HomePage.module.css";
 const HomePage = () => {
     let auth = useAuth();
 
-    let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
+    let useDefaultQuestion = true; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");

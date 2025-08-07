@@ -3,8 +3,10 @@ import Form from "react-bootstrap/Form";
 import style from "./QuestionContainer.module.css";
 import { useState, useEffect } from "react";
 import CodeEditor from "../CodeEditor/CodeEditor";
-import { Category, Difficulty, Type } from "../../utils/enumOptions";
 import ReactMarkdown from "react-markdown";
+import { Category } from "../../models/Category";
+import { Difficulty } from "../../models/Difficulty";
+import { Type } from "../../models/Type";
 
 interface Props {
     title: string;

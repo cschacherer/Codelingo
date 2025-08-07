@@ -16,7 +16,7 @@ const RegisterPage = () => {
 
     const register = async () => {
         try {
-            auth.registerUser(username, password, email);
+            await auth.registerUser(username, password, email);
             navigate("/");
         } catch (err) {
             let msg = getErrorMessage(err);

@@ -220,15 +220,10 @@ def createApp(testing=False):
     def verifyResetToken(
         token, expiration=1800
     ):  # 1800 seconds means it expires after 30 minutes
-        serializer = URLSafeTimedSerializer(
-            app.config["SECRET_KEY"], max_age=expiration
-        )
-        try:
-            data = serializer.loads(token, max_age=expiration)
-            email = data["email"]
-            return email
-        except:
-            return None
+        serializer = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+        data = serializer.loads(token, max_age=expiration)
+        email = data["email"]
+        return email
 
     @app.route("/password/reset/request", methods=["POST"])
     def sendRequestResetEmail():
@@ -241,22 +236,16 @@ def createApp(testing=False):
             return jsonify(message="Email not found within our user database."), 404
 
         try:
-            print(app.config["MAIL_USERNAME"])
-            print(app.config["MAIL_PASSWORD"])
             token = getResetToken(recipientEmail)
 
-            resetLink = f"{app.config["WEBSITE_BASE_URL"]}/reset_password/{token}"
+            resetLink = f"{app.config["WEBSITE_BASE_URL"]}/password/reset/{token}"
 
             msg = Message(
                 "CodeLingo Reset Password",
                 recipients=[recipientEmail],
                 sender=app.config["MAIL_DEFAULT_SENDER"],
             )
-            msg.body = f"""To reset your password, visit the following link: {resetLink}
-
-            If you did not make this request, then ignore this email and no changes will be made.
-
-            """
+            msg.body = f"To reset your password, visit the following link: {resetLink} \n \n If you did not make this request, then ignore this email and no changes will be made."
             mail.send(msg)
 
         except Exception as e:
@@ -271,7 +260,7 @@ def createApp(testing=False):
         )
 
     @app.route("/password/reset", methods=["POST"])
-    def resetPassword(token):
+    def resetPassword():
         data = request.get_json()
         token = data.get("token")
         newPassword = data.get("newPassword")
@@ -283,20 +272,24 @@ def createApp(testing=False):
                 400,
             )
 
-        email = verifyResetToken(token)
-        if not email:
-            return jsonify(message="Invalid or expired token"), 400
+        try:
+            email = verifyResetToken(token)
+            if not email:
+                return jsonify(message="Invalid or expired token"), 400
 
-        user = User.query.filter_by(email=email).first()
-        if not user:
-            return (
-                jsonify(message="Email is not associated with any existing user."),
-                404,
-            )
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                return (
+                    jsonify(message="Email is not associated with any existing user."),
+                    404,
+                )
 
-        user.changePassword(plainTextPassword=newPassword)
-        db.session.commit()
-        return jsonify(messge="Password updated successfully"), 200
+            user.changePassword(plainTextPassword=newPassword)
+            db.session.commit()
+            return jsonify(message="Password updated successfully"), 200
+        except Exception as e:
+            msg = f"Error resetting password. {e}"
+            return jsonify(message=msg), 400
 
     # endregion
 
