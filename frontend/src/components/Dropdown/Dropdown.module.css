@@ -28,3 +28,26 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.dropdown__dropdownItemContainer {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.dropdown__dropdownContainer {
+    width: 100%;
+    display: flex; 
+    flex-direction: column;
+}
+
+.dropdown__dropdownCustomText {
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+}

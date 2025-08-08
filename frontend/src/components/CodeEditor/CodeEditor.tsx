@@ -42,6 +42,7 @@ import { php } from "@codemirror/lang-php";
 import { python } from "@codemirror/lang-python";
 import { sql } from "@codemirror/lang-sql";
 import { vue } from "@codemirror/lang-vue";
+import style from "./CodeEditor.module.css";
 
 interface Props {
     questionCategory: Category;
@@ -180,7 +181,7 @@ const CodeEditor = ({
         }
     }, [userAnswer]);
 
-    return <div ref={editorRef} className="codemirror-container"></div>;
+    return <div ref={editorRef} className={style.codeMirror_container}></div>;
 };
 
 export default CodeEditor;

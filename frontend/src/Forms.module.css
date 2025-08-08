@@ -21,10 +21,11 @@
 }
 
 .form__title {
-    font-size: 35px;
+    font-size: 2.5rem;
     font-weight: 600;
     text-align: center;
-    line-height: 100px;
+    line-height: 100%;
+    padding: 30px; 
     color: #fff;
     user-select: none;
     border-radius: 15px 15px 0 0;

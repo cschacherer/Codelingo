@@ -9,7 +9,6 @@ import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
 
 interface Props {
-    title: string;
     question: string;
     answer: string;
     questionCategory: Category;
@@ -24,7 +23,6 @@ interface Props {
 }
 
 const QuestionContainer = ({
-    title,
     question,
     answer,
     questionCategory,
@@ -84,81 +82,87 @@ const QuestionContainer = ({
 
     return (
         <div className={style.questionContainer}>
-            <div>
-                <h1 className={style.questionContainer__questionHeader}>
-                    {title}
-                </h1>
-                <div className={style.questionContainer__questionText}>
-                    <ReactMarkdown>{formattedQuestion}</ReactMarkdown>
-                </div>
-            </div>
-
-            <div>
-                {questionType === Type.Coding ? (
-                    <div>
-                        <label
-                            className={style.questionContainer__userAnswerLabel}
-                        >
-                            Your Answer: {questionCategory} Coding Editor
-                        </label>
-                        <CodeEditor
-                            questionCategory={questionCategory}
-                            userAnswer={userAnswer}
-                            handleUserAnswerChanged={handleUserAnswerChangeCode}
-                        ></CodeEditor>
-                    </div>
-                ) : (
-                    <Form.Group>
-                        <Form.Label
-                            className={style.questionContainer__userAnswerLabel}
-                        >
-                            Your answer
-                        </Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={8}
-                            onChange={handleUserAnswerChange}
-                            value={userAnswer}
-                        ></Form.Control>
-                    </Form.Group>
-                )}
-                <div className={style.questionContainer__buttonContainer}>
-                    <Button
-                        className={style.questionContainer__glowButton}
-                        variant="light"
-                        size="lg"
-                        onClick={handleShowAnswerClicked}
-                    >
-                        {showAnswer ? "Hide Answer" : "Show Answer"}
-                    </Button>
-
-                    <Button
-                        className={style.questionContainer__glowButton}
-                        variant="light"
-                        size="lg"
-                        onClick={() =>
-                            handleSaveQuestion(
-                                formattedQuestion,
-                                formattedAnswer,
-                                userAnswer
-                            )
-                        }
-                    >
-                        {isSaved ? "Saved Question" : "Save Question"}
-                    </Button>
-                </div>
-            </div>
-
-            {showAnswer && (
-                <div className={style.questionContainer__answerContainer}>
-                    <h1 className={style.questionContainer__answerHeader}>
-                        Answer
+            <div className={style.questionContainer__background}>
+                <div className={style.questionContainer__questionContainer}>
+                    <h1 className={style.questionContainer__questionHeader}>
+                        Question
                     </h1>
-                    <div className={style.questionContainer__answerText}>
-                        <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
+                    <div className={style.questionContainer__text}>
+                        <ReactMarkdown>{formattedQuestion}</ReactMarkdown>
                     </div>
                 </div>
-            )}
+
+                <div className={style.questionContainer__userAnswerContainer}>
+                    {questionType === Type.Coding ? (
+                        <div>
+                            <label
+                                className={
+                                    style.questionContainer__userAnswerLabel
+                                }
+                            >
+                                Your Answer: {questionCategory} Coding Editor
+                            </label>
+                            <CodeEditor
+                                questionCategory={questionCategory}
+                                userAnswer={userAnswer}
+                                handleUserAnswerChanged={
+                                    handleUserAnswerChangeCode
+                                }
+                            ></CodeEditor>
+                        </div>
+                    ) : (
+                        <Form.Group>
+                            <Form.Label
+                                className={
+                                    style.questionContainer__userAnswerLabel
+                                }
+                            >
+                                Your answer
+                            </Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={8}
+                                onChange={handleUserAnswerChange}
+                                value={userAnswer}
+                            ></Form.Control>
+                        </Form.Group>
+                    )}
+                    <div className={style.questionContainer__buttonContainer}>
+                        <button
+                            className={style.questionContainer__glowButton}
+                            onClick={handleShowAnswerClicked}
+                        >
+                            {showAnswer ? "Hide Answer" : "Show Answer"}
+                        </button>
+
+                        <Button
+                            className={style.questionContainer__glowButton}
+                            variant="light"
+                            size="lg"
+                            onClick={() =>
+                                handleSaveQuestion(
+                                    formattedQuestion,
+                                    formattedAnswer,
+                                    userAnswer
+                                )
+                            }
+                        >
+                            {isSaved ? "Saved Question" : "Save Question"}
+                        </Button>
+                    </div>
+                </div>
+
+                {showAnswer && (
+                    <div className={style.questionContainer__answerContainer}>
+                        <h1 className={style.questionContainer__answerHeader}>
+                            Answer
+                        </h1>
+                        <div className={style.questionContainer__text}>
+                            <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

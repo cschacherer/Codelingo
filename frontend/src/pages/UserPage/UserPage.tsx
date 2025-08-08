@@ -61,7 +61,6 @@ const UserPage = () => {
                     </div>
                 </div>
             </div>
-            <div>Settings</div>
         </div>
     );
 };

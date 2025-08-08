@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import RequestPasswordResetPage from "./pages/RequestPasswordResetPage/RequestPasswordResetPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage/ChangePasswordPage";
+import AboutPage from "./pages/AboutPage/AboutPage";
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="about" element={<AboutPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/user" element={<UserPage />} />

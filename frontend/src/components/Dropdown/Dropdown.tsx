@@ -11,6 +11,9 @@ interface Props {
     items: string[];
     selectedItem: string;
     changeSelectedItem: (value: any) => void;
+    useCustomText?: boolean;
+    customText?: string;
+    onCustomTextChange?: (value: string) => void;
 }
 
 const Dropdown = ({
@@ -18,6 +21,9 @@ const Dropdown = ({
     items,
     selectedItem,
     changeSelectedItem,
+    useCustomText = false,
+    customText = "",
+    onCustomTextChange = () => {},
 }: Props) => {
     return (
         <Container>
@@ -25,29 +31,43 @@ const Dropdown = ({
                 <Col className={styles.dropdown__lableColumn}>
                     <h1 className={styles.dropdown__lableText}>{title}</h1>
                 </Col>
-                <Col className={styles.dropdown__dropdownColumn}>
-                    <div className="dropdown">
-                        <button
-                            className={`btn btn-light dropdown-toggle ${styles.dropdown__dropdownButton}`}
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
-                            {selectedItem}
-                        </button>
-                        <ul className="dropdown-menu">
-                            {items.map((item) => (
-                                <li
-                                    className="dropdown-item"
-                                    key={item}
-                                    onClick={() => {
-                                        changeSelectedItem(item);
-                                    }}
-                                >
-                                    {item}
-                                </li>
-                            ))}
-                        </ul>
+                <Col>
+                    <div className={styles.dropdown__dropdownContainer}>
+                        <div className="dropdown">
+                            <button
+                                className={`btn btn-light dropdown-toggle ${styles.dropdown__dropdownButton}`}
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                            >
+                                {selectedItem}
+                            </button>
+                            <ul
+                                className={`dropdown-menu ${styles.dropdown__dropdownItemContainer}`}
+                            >
+                                {items.map((item) => (
+                                    <li
+                                        className="dropdown-item"
+                                        key={item}
+                                        onClick={() => {
+                                            changeSelectedItem(item);
+                                        }}
+                                    >
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                        {useCustomText && (
+                            <input
+                                className={styles.dropdown__dropdownCustomText}
+                                type="text"
+                                value={customText}
+                                onChange={(e) =>
+                                    onCustomTextChange(e.target.value)
+                                }
+                            ></input>
+                        )}
                     </div>
                 </Col>
             </Row>

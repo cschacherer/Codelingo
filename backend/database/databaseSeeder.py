@@ -13,7 +13,7 @@ class DatabaseSeeder:
                 User(
                     username="admin",
                     plainTextPassword="admin123",
-                    email="adminEmail@gmail.com",
+                    email="connerschacherer@gmail.com",
                 ),
                 User(
                     username="guest",

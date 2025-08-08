@@ -16,7 +16,7 @@ import style from "./HomePage.module.css";
 const HomePage = () => {
     let auth = useAuth();
 
-    let useDefaultQuestion = true; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
+    let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
@@ -28,6 +28,7 @@ const HomePage = () => {
         Difficulty.Easy
     );
     const [selectedType, setSelectedType] = useState(Type.Coding);
+    const [customCategory, setCustomCategory] = useState("");
 
     //These variables are only updated when a question is generated - it will mess with the
     //question component Coding Editor if it changes to a different category when the dropdown changes
@@ -64,7 +65,15 @@ const HomePage = () => {
 
             setIsLoading(true);
 
-            const data = await generateQuestion(category, difficulty, type);
+            const categoryToSend =
+                category !== Category.Custom ? category : customCategory;
+
+            const data = await generateQuestion(
+                categoryToSend,
+                difficulty,
+                type
+            );
+
             setQuestion(data.question);
             setAnswer(data.answer);
             setQuestionCategory(category);
@@ -100,11 +109,11 @@ const HomePage = () => {
                 ""
             );
             setQuestionIsSaved(true);
-            setCurrentQuestionId(data.id);
+            // setCurrentQuestionId(data.id);
         } catch (err) {
             let msg = getErrorMessage(err);
             console.log(msg);
-            setQuestionIsSaved(false);
+            // setQuestionIsSaved(false);
         }
     };
 
@@ -118,6 +127,10 @@ const HomePage = () => {
 
     const updateTypeChanged = (newValue: Type) => {
         setSelectedType(newValue);
+    };
+
+    const updateCustomCategoryChanged = (newValue: string) => {
+        setCustomCategory(newValue);
     };
 
     const questionOptions: QuestionOptions = {
@@ -141,15 +154,15 @@ const HomePage = () => {
         <div className={style.homePage__container}>
             <div className={style.homePage__sideBarColumn}>
                 <SideBar
-                    name="CodeLingo"
-                    icon={owlIcon}
                     options={questionOptions}
                     selectedCategory={selectedCategory}
+                    customCategory={customCategory}
                     selectedDifficulty={selectedDifficulty}
                     selectedType={selectedType}
                     handleCategoryChange={updateCategoryChanged}
+                    handleCustomCategoryChange={updateCustomCategoryChanged}
                     handleDifficultyChange={updateDifficultyChanged}
-                    hanldeTypeChange={updateTypeChanged}
+                    handleTypeChange={updateTypeChanged}
                     handleOnClick={generateQuestionFunction}
                     loading={isLoading}
                 ></SideBar>
@@ -160,7 +173,6 @@ const HomePage = () => {
                     onUserPage={false}
                 ></NavigationBar>
                 <QuestionContainer
-                    title="New Question"
                     question={question}
                     answer={answer}
                     questionCategory={questionCategory}

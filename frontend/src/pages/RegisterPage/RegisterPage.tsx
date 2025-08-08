@@ -4,6 +4,7 @@ import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
 import sharedStyle from "../../Forms.module.css";
 import style from "./RegisterPage.module.css";
+import PasswordInput from "../../components/PasswordInput/PasswordInput";
 
 const RegisterPage = () => {
     const [username, setUsername] = useState("admin");
@@ -47,18 +48,13 @@ const RegisterPage = () => {
                             Username
                         </label>
                     </div>
-                    <div className={sharedStyle.form__inputField}>
-                        <input
-                            className={`${sharedStyle.form__inputField__input} ${sharedStyle.form__inputFieldPassword}`}
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                        <label className={sharedStyle.form__inputFieldLabel}>
-                            Password
-                        </label>
-                    </div>
+                    <PasswordInput
+                        password={password}
+                        passwordLabel="Password"
+                        updatePasswordFunction={(e) =>
+                            setPassword(e.target.value)
+                        }
+                    ></PasswordInput>
                     <div className={sharedStyle.form__inputField}>
                         <input
                             className={

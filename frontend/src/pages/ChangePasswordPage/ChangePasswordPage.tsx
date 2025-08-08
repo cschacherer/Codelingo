@@ -5,6 +5,7 @@ import { useAuth } from "../../context/authContext";
 import { patchUser } from "../../services/userService";
 import sharedStyle from "../../Forms.module.css";
 import { resetPassword } from "../../services/authService";
+import PasswordInput from "../../components/PasswordInput/PasswordInput";
 
 const ChangePasswordPage = () => {
     const [newPassword, setNewPassword] = useState("");
@@ -106,36 +107,20 @@ const ChangePasswordPage = () => {
                             handleSubmitFunction();
                         }}
                     >
-                        <div className={sharedStyle.form__inputField}>
-                            <input
-                                className={`${sharedStyle.form__inputField__input} ${sharedStyle.form__inputFieldPassword}`}
-                                type="password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                required
-                            />
-                            <label
-                                className={sharedStyle.form__inputFieldLabel}
-                            >
-                                New Password
-                            </label>
-                        </div>
-                        <div className={sharedStyle.form__inputField}>
-                            <input
-                                className={`${sharedStyle.form__inputField__input} ${sharedStyle.form__inputFieldPassword}`}
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
-                                required
-                            />
-                            <label
-                                className={sharedStyle.form__inputFieldLabel}
-                            >
-                                Confirm New Password
-                            </label>
-                        </div>
+                        <PasswordInput
+                            password={newPassword}
+                            passwordLabel="New Password"
+                            updatePasswordFunction={(e) =>
+                                setNewPassword(e.target.value)
+                            }
+                        ></PasswordInput>
+                        <PasswordInput
+                            password={confirmPassword}
+                            passwordLabel="Confirm Password"
+                            updatePasswordFunction={(e) =>
+                                setConfirmPassword(e.target.value)
+                            }
+                        ></PasswordInput>
                         <div className={sharedStyle.form__inputField}>
                             <input
                                 className={`${sharedStyle.form__inputField__input} ${sharedStyle.form__submitButton}`}

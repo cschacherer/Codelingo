@@ -118,9 +118,12 @@ def createApp(testing=False):
         email = data.get("email")
         if not username or not password:
             return jsonify(message="Username or password cannot be missing"), 400
-        existingUser = User.query.filter_by(username=username).first()
-        if existingUser:
+        existingUsername = User.query.filter_by(username=username).first()
+        if existingUsername:
             return jsonify(message="User with that username already exists"), 400
+        existingEmail = User.query.filter_by(email=email).first()
+        if existingEmail:
+            return jsonify(message="User with that email already exists"), 400
         user = User(username=username, plainTextPassword=password, email=email)
         db.session.add(user)
         db.session.commit()
@@ -305,41 +308,44 @@ def createApp(testing=False):
 
     @app.route("/questions/generate", methods=["POST"])
     def generateQuestion():
-        data = request.get_json()
-        category = data.get("category")
-        difficulty = data.get("difficulty")
-        type = data.get("type")
-        if not category or not difficulty or not type:
+        try:
+            data = request.get_json()
+            category = data.get("category")
+            difficulty = data.get("difficulty")
+            type = data.get("type")
+            if not category or not difficulty or not type:
+                return (
+                    jsonify(
+                        message="The category, difficulty, or type for the question cannot be missing"
+                    ),
+                    400,
+                )
+            questionData = communicator.generateQuestion(category, difficulty, type)
+            parsedJsonData = json.loads(questionData)
+
+            # Handle case-insensitive keys safely
+            keys_lower = {k.lower(): v for k, v in parsedJsonData.items()}
+            question = (
+                keys_lower.get("question")
+                or f"Error parsing the question from the LLM response. {parsedJsonData}"
+            )
+            answer = (
+                keys_lower.get("answer")
+                or f"Error parsing the answer from the LLM response. {parsedJsonData}"
+            )
+
             return (
                 jsonify(
-                    message="The category, difficulty, or type for the question cannot be missing"
+                    category=category,
+                    difficulty=difficulty,
+                    type=type,
+                    question=question,
+                    answer=answer,
                 ),
-                400,
+                200,
             )
-        questionData = communicator.generateQuestion(category, difficulty, type)
-        parsedJsonData = json.loads(questionData)
-
-        # Handle case-insensitive keys safely
-        keys_lower = {k.lower(): v for k, v in parsedJsonData.items()}
-        question = (
-            keys_lower.get("question")
-            or f"Error parsing the question from the LLM response. {parsedJsonData}"
-        )
-        answer = (
-            keys_lower.get("answer")
-            or f"Error parsing the answer from the LLM response. {parsedJsonData}"
-        )
-
-        return (
-            jsonify(
-                category=category,
-                difficulty=difficulty,
-                type=type,
-                question=question,
-                answer=answer,
-            ),
-            200,
-        )
+        except Exception as e:
+            return jsonify(message=e)
 
     @app.route("/questions/save", methods=["POST"])
     @jwt_required()

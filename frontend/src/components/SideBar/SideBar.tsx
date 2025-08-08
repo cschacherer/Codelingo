@@ -5,17 +5,18 @@ import { QuestionOptions } from "../../models/QuestionOptions";
 import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
+import icon from "../../assets/owlIcon.png";
 
 interface Props {
-    name: string;
-    icon: string;
     options: QuestionOptions;
     selectedCategory: Category;
+    customCategory: string;
     selectedDifficulty: Difficulty;
     selectedType: Type;
     handleCategoryChange: (newValue: Category) => void;
+    handleCustomCategoryChange: (newValue: string) => void;
     handleDifficultyChange: (newValue: Difficulty) => void;
-    hanldeTypeChange: (newValue: Type) => void;
+    handleTypeChange: (newValue: Type) => void;
     handleOnClick: (
         category: Category,
         difficulty: Difficulty,
@@ -25,19 +26,20 @@ interface Props {
 }
 
 const SideBar = ({
-    icon,
     options,
     selectedCategory,
+    customCategory,
     selectedDifficulty,
     selectedType,
     handleCategoryChange,
+    handleCustomCategoryChange,
     handleDifficultyChange,
-    hanldeTypeChange,
+    handleTypeChange,
     handleOnClick,
     loading,
 }: Props) => {
     return (
-        <Container className={`${style.sideBar__background}`}>
+        <Container className={style.sideBar__background}>
             <div className={style.sideBar__container}>
                 <h1>
                     <a className={style.sideBar__title} href="/">
@@ -51,11 +53,13 @@ const SideBar = ({
                 <GeneratePanel
                     options={options}
                     selectedCategory={selectedCategory}
+                    customCategory={customCategory}
                     selectedDifficulty={selectedDifficulty}
                     selectedType={selectedType}
                     handleCategoryChange={handleCategoryChange}
+                    handleCustomCategoryChange={handleCustomCategoryChange}
                     handleDifficultyChange={handleDifficultyChange}
-                    hanldeTypeChange={hanldeTypeChange}
+                    handleTypeChange={handleTypeChange}
                     handleOnClick={handleOnClick}
                     loading={loading}
                 ></GeneratePanel>

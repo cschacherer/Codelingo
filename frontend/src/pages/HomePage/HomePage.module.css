@@ -10,6 +10,7 @@
 
 .homePage__sideBarColumn {
     width: 25%;
+    min-width: 425px;
     padding: 0 !important;
 }
 

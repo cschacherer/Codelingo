@@ -4,8 +4,8 @@
     width: 100%;
     --gray-background:#f5f5f5;
     --darker-gray: #888888;
-    --gradient-blue: #21d4fc; 
-    --gradient-mid-blue: #6286fd;
-    --gradient-purple: #a238fe; 
+    --gradient-blue: rgb(33, 212, 252); 
+    --gradient-mid-blue: rgb(98, 134, 253);
+    --gradient-purple: rgb(162, 56, 254); 
 }
 

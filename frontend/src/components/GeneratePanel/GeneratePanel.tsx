@@ -6,15 +6,18 @@ import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { QuestionOptions } from "../../models/QuestionOptions";
 import { Type } from "../../models/Type";
+import { useState } from "react";
 
 interface Props {
     options: QuestionOptions;
     selectedCategory: Category;
+    customCategory: string;
     selectedDifficulty: Difficulty;
     selectedType: Type;
     handleCategoryChange: (newValue: Category) => void;
+    handleCustomCategoryChange: (newValue: string) => void;
     handleDifficultyChange: (newValue: Difficulty) => void;
-    hanldeTypeChange: (newValue: Type) => void;
+    handleTypeChange: (newValue: Type) => void;
     handleOnClick: (
         category: Category,
         difficulty: Difficulty,
@@ -26,21 +29,38 @@ interface Props {
 const GeneratePanel = ({
     options,
     selectedCategory,
+    customCategory,
     selectedDifficulty,
     selectedType,
     handleCategoryChange,
+    handleCustomCategoryChange,
     handleDifficultyChange,
-    hanldeTypeChange,
+    handleTypeChange,
     handleOnClick,
     loading,
 }: Props) => {
+    const [showCustomCategory, setShowCustomCategory] = useState(false);
+
+    //if the Category dropdown changes to custom, show the custom text box
+    const handleCategoryChange_generatePanel = (value: Category) => {
+        if (value === Category.Custom) {
+            setShowCustomCategory(true);
+        } else {
+            setShowCustomCategory(false);
+        }
+        handleCategoryChange(value);
+    };
+
     return (
         <Container className={`${style.generatePanel__container}`}>
             <Dropdown
                 title={options.categoryLabel}
                 items={options.categoryOptions}
                 selectedItem={selectedCategory}
-                changeSelectedItem={handleCategoryChange}
+                changeSelectedItem={handleCategoryChange_generatePanel}
+                useCustomText={showCustomCategory}
+                customText={customCategory}
+                onCustomTextChange={handleCustomCategoryChange}
             ></Dropdown>
             <Dropdown
                 title={options.difficultyLabel}
@@ -52,7 +72,7 @@ const GeneratePanel = ({
                 title={options.typeLabel}
                 items={options.typeOptions}
                 selectedItem={selectedType}
-                changeSelectedItem={hanldeTypeChange}
+                changeSelectedItem={handleTypeChange}
             ></Dropdown>
 
             <Button

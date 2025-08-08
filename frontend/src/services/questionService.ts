@@ -1,10 +1,13 @@
+import { Category } from "../models/Category";
+import { Difficulty } from "../models/Difficulty";
+import { Question } from "../models/Question";
+import { SavedQuestion } from "../models/SavedQuestion";
+import { Type } from "../models/Type";
 import { getErrorMessage } from "../utils/utils";
 import apiClient from "./apiClient";
-import { Question, SavedQuestion } from "../models/questions";
-import { Category, Difficulty, Type } from "../utils/enumOptions";
 
 export const generateQuestion = async (
-    category: Category,
+    category: Category | string,
     difficulty: Difficulty,
     type: Type
 ) => {
