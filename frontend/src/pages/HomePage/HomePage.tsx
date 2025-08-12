@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import QuestionContainer from "../../components/QuestionContainer/QuestionContainer";
 import SideBar from "../../components/SideBar/SideBar";
-import owlIcon from "../../assets/owlIcon.png";
 import { Defaults } from "../../utils/questionDefaults";
 import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";

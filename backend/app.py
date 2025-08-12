@@ -356,11 +356,17 @@ def createApp(testing=False):
             return jsonify(message="User not found"), 404
         data = request.get_json()
 
-        # if id already exists, delete it to override saving an existing question
+        # if id already exists, override the answers
         id = data.get("id")
-        if id != -1:
-            db.session.delete(id=id)
+        existingQuestion = SavedQuestion.query.filter_by(id=id).first()
+        if existingQuestion:
+            userAnswer = data.get("userAnswer")
+            notes = data.get("notes")
+            existingQuestion.updateQuestion(userAnswer, notes)
+            db.session.commit()
+            return jsonify(question=existingQuestion.to_dict()), 201
 
+        # question is new
         question = SavedQuestion(
             category=data.get("category"),
             difficulty=data.get("difficulty"),

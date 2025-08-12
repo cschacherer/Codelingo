@@ -20,8 +20,11 @@
 }
 
 .navigationBar__brand {
-    font-size: 2rem;
+    font-size: 2.4rem;
     margin-left: 25px;
+    display: flex; 
+    justify-items: center;
+    align-items: center;
 }
 
 .navigationBar__icon {
@@ -29,4 +32,5 @@
     height: 50px;
     border: none;
     border-radius: 0px;
+    margin-right: 5px;
 }

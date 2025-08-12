@@ -81,3 +81,7 @@ class SavedQuestion(db.Model):
             "notes": self.notes,
             "userId": self.userId,
         }
+
+    def updateQuestion(self, newAnswer, newNotes):
+        self.userAnswer = newAnswer
+        self.notes = newNotes

@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
+import Header from "../Header/Header";
 
 interface Props {
     question: string;
@@ -84,9 +85,7 @@ const QuestionContainer = ({
         <div className={style.questionContainer}>
             <div className={style.questionContainer__background}>
                 <div className={style.questionContainer__questionContainer}>
-                    <h1 className={style.questionContainer__questionHeader}>
-                        Question
-                    </h1>
+                    <Header title="Question" defaultBackground={false}></Header>
                     <div className={style.questionContainer__text}>
                         <ReactMarkdown>{formattedQuestion}</ReactMarkdown>
                     </div>
@@ -154,9 +153,10 @@ const QuestionContainer = ({
 
                 {showAnswer && (
                     <div className={style.questionContainer__answerContainer}>
-                        <h1 className={style.questionContainer__answerHeader}>
-                            Answer
-                        </h1>
+                        <Header
+                            title="Answer"
+                            defaultBackground={false}
+                        ></Header>
                         <div className={style.questionContainer__text}>
                             <ReactMarkdown>{formattedAnswer}</ReactMarkdown>
                         </div>

@@ -1,0 +1,17 @@
+.about__container {
+    display: flex;
+    flex-direction: column;
+    margin: 25px;
+}
+
+.about__headerBackground {
+    background: linear-gradient(-135deg, var(--gradient-purple), var(--gradient-blue));
+    border: 1px solid var(--darker-gray);
+    border-bottom: none;
+}
+
+.about__text {
+    border: 1px solid var(--darker-gray);
+    padding: 20px;
+    font-size: 1.2rem;
+}

@@ -17,14 +17,6 @@
     /* background: linear-gradient(125deg, rgba(53, 188, 252, 255), var(--gradient-mid-blue)); */
 }
 
-.questionContainer__questionHeader {
-    margin: 0px;
-    padding: 10px;
-    font-size: 2.7rem;
-    font-weight: 500;
-    color: white;
-}
-
 .questionContainer__text {
     color: black;
     font-size: 1.1rem;
@@ -60,10 +52,7 @@
     border: 1px solid var(--darker-gray);
 }
 
-.questionContainer__answerHeader {
-    color: white;
-    padding: 10px;
-}
+
 
 /* 
 stuff to do with glow button */

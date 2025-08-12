@@ -83,7 +83,7 @@ const CodeEditor = ({
 
         // Initialize CodeMirror
         const state = EditorState.create({
-            doc: "",
+            doc: userAnswer,
             extensions: [
                 basicSetup,
                 language.of(setLanguage(questionCategory)), //empty default language

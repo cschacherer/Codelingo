@@ -9,13 +9,10 @@
     display: flex;
     flex-direction: column;
     margin: 25px;
-
 }
 
-.savedQuestions__title {
-    font-size: 35px;
+.savedQuestions__headerBackground {
     background: linear-gradient(-135deg, var(--gradient-purple), var(--gradient-blue));
-    padding: 0px 20px; 
     border: 1px solid var(--darker-gray);
 }
 
@@ -28,16 +25,46 @@
     background-color: rgb(201, 201, 201)
 }
 
+.savedQuestions__button {
+    background-color: var(--gray-background);
+    width: 100%;
+    height: 100%;
+}
+
 td {
     border: 1px solid var(--darker-gray);
     padding: 0.25rem 0.75rem;
 }
 
-th{
-    border: 1px solid var(--darker-gray);
-    padding: 0.75rem 0.75rem;
+.savedQuestions__buttonCell {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    border: none;
+    align-items: center;
 }
 
-.savedQuestions__button {
-    background-color: var(--gray-background);
+.savedQuestions__retryHeader {
+    border: none;
+    padding: 0.5rem 0.75rem;
+    background-color: white;
+}
+
+.savedQuestions__showAnswersContainer {
+    padding: 10px 5px;
+}
+
+.savedQuestions__showAnswers {
+    font-size: 1rem;
+    margin-left: 10px;
+}
+
+th{
+    border: 1px solid var(--darker-gray);
+    padding: 0.5rem 0.75rem;
+}
+
+tr {
+    height: 10px;
+    max-height: 10px;
 }

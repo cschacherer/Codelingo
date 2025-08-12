@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { getUser } from "../../services/userService";
-import style from "./UserPage.module.css";
+import style from "./ProfilePage.module.css";
 import NavigationBar from "../../components/Navigation/NavigationBar";
 import { useAuth } from "../../context/authContext";
 import userAvatar from "../../assets/user.png";
+import Header from "../../components/Header/Header";
 
-const UserPage = () => {
+const ProfilePage = () => {
     const [username, setUsername] = useState<string>("");
     const [email, setEmail] = useState<string>("");
 
@@ -27,13 +28,13 @@ const UserPage = () => {
     }, []);
 
     return (
-        <div className={style.userPage}>
+        <div className={style.profilePage}>
             <NavigationBar
                 loggedIn={auth.loggedIn}
                 onUserPage={true}
             ></NavigationBar>
             <div className={style.profile__container}>
-                <div className={style.profile__title}>Profile</div>
+                <Header title="Profile" defaultBackground={true}></Header>
                 <div className={style.profile__avatarUsernameContainer}>
                     <img
                         className={style.profile__avatar}
@@ -64,4 +65,4 @@ const UserPage = () => {
         </div>
     );
 };
-export default UserPage;
+export default ProfilePage;

@@ -1,5 +1,5 @@
 /* For Create React App, the root container is usually #root */
-#root {
+:root {
     height: 100%;
     width: 100%;
     --gray-background:#f5f5f5;
@@ -9,3 +9,12 @@
     --gradient-purple: rgb(162, 56, 254); 
 }
 
+#root {
+    height: 100%;
+    width: 100%;
+    --gray-background: #f5f5f5;
+    --darker-gray: #888888;
+    --gradient-blue: rgb(33, 212, 252);
+    --gradient-mid-blue: rgb(98, 134, 253);
+    --gradient-purple: rgb(162, 56, 254);
+}

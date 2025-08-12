@@ -31,9 +31,9 @@ export const generateQuestion = async (
 
 export const saveQuestion = async (
     id: number,
-    category: Category,
-    difficulty: Difficulty,
-    type: Type,
+    category: Category | string,
+    difficulty: Difficulty | string,
+    type: Type | string,
     question: string,
     answer: string,
     userAnswer: string,
