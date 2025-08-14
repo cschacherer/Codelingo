@@ -7,6 +7,7 @@ import { Type } from "../../models/Type";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { getCategoryFromString } from "../../models/Category";
 import useConfirm from "../ConfirmDialog/ConfirmDialog";
+import GlowButton from "../GlowButton/GlowButton";
 
 interface Props {
     showDialog: boolean;
@@ -57,11 +58,6 @@ const QuestionModal = ({
     };
 
     const handleShowAnswersLocally = () => {
-        setNewUserAnswer(
-            newUserAnswer +
-                " \n -------------------------------- \n " +
-                question.userAnswer
-        );
         setNewNotes(question.notes);
         setShowAnswersLocally(true);
     };
@@ -182,14 +178,16 @@ const QuestionModal = ({
                             )}
                         </div>
                         {!showAnswersLocally && (
-                            <Button
-                                className={style.questionModal__glowButton}
-                                variant="light"
-                                size="sm"
-                                onClick={handleShowAnswersLocally}
+                            <div
+                                className={
+                                    style.questionModal__showAnswersButton
+                                }
                             >
-                                Show Answers
-                            </Button>
+                                <GlowButton
+                                    text="Show Answers"
+                                    handleOnClick={handleShowAnswersLocally}
+                                ></GlowButton>
+                            </div>
                         )}
 
                         {showAnswersLocally && (
@@ -239,19 +237,13 @@ const QuestionModal = ({
                     </div>
                 </Modal.Body>
                 <Modal.Footer className={style.questionModal__footer}>
-                    <Button
-                        className={style.questionModal__glowButton}
-                        variant="light"
-                        size="lg"
-                        onClick={handleCloseDialogLocally}
-                    >
-                        Cancel
-                    </Button>
-                    <Button
-                        className={style.questionModal__glowButton}
-                        variant="light"
-                        size="lg"
-                        onClick={() => {
+                    <GlowButton
+                        text="Cancel"
+                        handleOnClick={handleCloseDialogLocally}
+                    ></GlowButton>
+                    <GlowButton
+                        text="Save"
+                        handleOnClick={() => {
                             setShowAnswersLocally(false);
                             saveQuestionToServer(
                                 question,
@@ -259,9 +251,7 @@ const QuestionModal = ({
                                 newNotes
                             );
                         }}
-                    >
-                        Save
-                    </Button>
+                    ></GlowButton>
                 </Modal.Footer>
             </Modal>
             {/* <ConfirmOverrideDialog /> */}

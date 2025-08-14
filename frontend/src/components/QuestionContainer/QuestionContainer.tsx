@@ -8,6 +8,7 @@ import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
 import Header from "../Header/Header";
+import GlowButton from "../GlowButton/GlowButton";
 
 interface Props {
     question: string;
@@ -127,26 +128,32 @@ const QuestionContainer = ({
                         </Form.Group>
                     )}
                     <div className={style.questionContainer__buttonContainer}>
-                        <button
-                            className={style.questionContainer__glowButton}
-                            onClick={handleShowAnswerClicked}
+                        <div
+                            className={
+                                style.questionContainer__answerButtonContainer
+                            }
                         >
-                            {showAnswer ? "Hide Answer" : "Show Answer"}
-                        </button>
+                            <GlowButton
+                                text={"Analyze Answer"}
+                                handleOnClick={() => {}}
+                            ></GlowButton>
 
-                        <Button
-                            className={style.questionContainer__glowButton}
-                            variant="light"
-                            size="lg"
-                            onClick={() =>
+                            <GlowButton
+                                text={
+                                    showAnswer ? "Hide Answer" : "Show Answer"
+                                }
+                                handleOnClick={handleShowAnswerClicked}
+                            ></GlowButton>
+                        </div>
+                        <GlowButton
+                            text={isSaved ? "Saved Question" : "Save Question"}
+                            handleOnClick={() =>
                                 handleSaveQuestion(
                                     formattedQuestion,
                                     formattedAnswer
                                 )
                             }
-                        >
-                            {isSaved ? "Saved Question" : "Save Question"}
-                        </Button>
+                        ></GlowButton>
                     </div>
                 </div>
 

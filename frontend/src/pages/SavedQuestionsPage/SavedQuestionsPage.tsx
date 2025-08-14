@@ -17,7 +17,7 @@ const SavedQuestionsPage = () => {
         null
     );
 
-    const [showAnswers, setShowAnswers] = useState(false);
+    const [showAnswers, setShowAnswers] = useState(true);
 
     const auth = useAuth();
 
