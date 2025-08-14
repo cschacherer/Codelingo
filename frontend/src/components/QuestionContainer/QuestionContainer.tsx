@@ -17,10 +17,11 @@ interface Props {
     questionType: Type;
     handleSaveQuestion: (
         formattedQuestion: string,
-        formattedAnswer: string,
-        userAnswer: string
+        formattedAnswer: string
     ) => void;
     isSaved: boolean;
+    userAnswer: string;
+    handleUserAnswerChanged: (newValue: string) => void;
 }
 
 const QuestionContainer = ({
@@ -31,8 +32,9 @@ const QuestionContainer = ({
     questionType,
     handleSaveQuestion,
     isSaved,
+    userAnswer,
+    handleUserAnswerChanged,
 }: Props) => {
-    const [userAnswer, setUserAnswer] = useState("");
     const [showAnswer, setShowAnswer] = useState(false);
 
     const [formattedQuestion, setFormattedQuestion] = useState("");
@@ -52,7 +54,6 @@ const QuestionContainer = ({
     }
 
     useEffect(() => {
-        setUserAnswer("");
         setShowAnswer(false);
 
         let correctNewLineQuestion = replaceNewLine(question);
@@ -71,14 +72,8 @@ const QuestionContainer = ({
         setShowAnswer(!showAnswer);
     };
 
-    const handleUserAnswerChange = (
-        event: React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-        setUserAnswer(event.target.value);
-    };
-
-    const handleUserAnswerChangeCode = (newValue: string) => {
-        setUserAnswer(newValue);
+    const handleUserAnswerChange__questionContainer = (value: string) => {
+        handleUserAnswerChanged(value);
     };
 
     return (
@@ -101,11 +96,12 @@ const QuestionContainer = ({
                             >
                                 Your Answer: {questionCategory} Coding Editor
                             </label>
+
                             <CodeEditor
                                 questionCategory={questionCategory}
                                 userAnswer={userAnswer}
                                 handleUserAnswerChanged={
-                                    handleUserAnswerChangeCode
+                                    handleUserAnswerChange__questionContainer
                                 }
                             ></CodeEditor>
                         </div>
@@ -121,7 +117,11 @@ const QuestionContainer = ({
                             <Form.Control
                                 as="textarea"
                                 rows={8}
-                                onChange={handleUserAnswerChange}
+                                onChange={(e) => {
+                                    handleUserAnswerChange__questionContainer(
+                                        e.target.value
+                                    );
+                                }}
                                 value={userAnswer}
                             ></Form.Control>
                         </Form.Group>
@@ -141,8 +141,7 @@ const QuestionContainer = ({
                             onClick={() =>
                                 handleSaveQuestion(
                                     formattedQuestion,
-                                    formattedAnswer,
-                                    userAnswer
+                                    formattedAnswer
                                 )
                             }
                         >

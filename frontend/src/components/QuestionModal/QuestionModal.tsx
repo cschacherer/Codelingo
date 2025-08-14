@@ -6,23 +6,39 @@ import ReactMarkdown from "react-markdown";
 import { Type } from "../../models/Type";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import { getCategoryFromString } from "../../models/Category";
-import questionContainerStyle from "../../components/QuestionContainer/QuestionContainer.module.css";
+import useConfirm from "../ConfirmDialog/ConfirmDialog";
 
 interface Props {
+    showDialog: boolean;
     question: SavedQuestion | null;
-    sendUpdatedQuestion: (value: SavedQuestion) => void;
+    saveQuestionToServer: (
+        question: SavedQuestion,
+        newUserAnswer: string,
+        newNotes: string
+    ) => void;
     showAnswers: boolean;
+    handleCloseDialog: () => void;
 }
 
 const QuestionModal = ({
+    showDialog,
     question,
-    sendUpdatedQuestion,
+    saveQuestionToServer,
     showAnswers,
+    handleCloseDialog,
 }: Props) => {
-    const [showDialog, setShowDialog] = useState(false);
+    if (!question) return null;
 
-    const [newUserAnswer, setNewUserAnswer] = useState("");
-    const [newNotes, setNewNotes] = useState("");
+    const [newUserAnswer, setNewUserAnswer] = useState<string>(
+        showAnswers && question ? question.userAnswer : ""
+    );
+    const [newNotes, setNewNotes] = useState<string>(
+        showAnswers && question ? question.notes : ""
+    );
+
+    const [showAnswersLocally, setShowAnswersLocally] = useState(showAnswers);
+
+    //const [confirmOverride, ConfirmOverrideDialog] = useConfirm();
 
     const handleNewUserAnswerChanged = (
         prop: string | React.ChangeEvent<HTMLTextAreaElement>
@@ -40,22 +56,21 @@ const QuestionModal = ({
         setNewNotes(prop.target.value);
     };
 
-    const closeDialog = () => {
-        setShowDialog(false);
-        question = null;
+    const handleShowAnswersLocally = () => {
+        setNewUserAnswer(
+            newUserAnswer +
+                " \n -------------------------------- \n " +
+                question.userAnswer
+        );
+        setNewNotes(question.notes);
+        setShowAnswersLocally(true);
     };
 
-    const saveChanges = () => {
-        if (question !== null) {
-            if (
-                question.userAnswer !== newUserAnswer ||
-                question.notes !== newNotes
-            ) {
-                question.userAnswer = newUserAnswer;
-                question.notes = newNotes;
-                sendUpdatedQuestion(question);
-            }
-        }
+    const handleCloseDialogLocally = () => {
+        setNewUserAnswer("");
+        setNewNotes("");
+        setShowAnswersLocally(false);
+        handleCloseDialog();
     };
 
     useEffect(() => {
@@ -63,20 +78,27 @@ const QuestionModal = ({
             if (showAnswers) {
                 setNewUserAnswer(question.userAnswer);
                 setNewNotes(question.notes);
+                setShowAnswersLocally(true);
+            } else {
+                setShowAnswersLocally(false);
             }
-
-            setShowDialog(true);
+        } else {
+            console.log("queston: " + question);
         }
-    }, [question]);
+    }, [question, showAnswers]);
 
     return (
         <div>
-            <Modal size="lg" show={showDialog} onHide={closeDialog}>
+            <Modal
+                size="lg"
+                show={showDialog}
+                onHide={handleCloseDialogLocally}
+            >
                 <Modal.Header
                     className={style.questionModal__header}
                     closeButton
                 >
-                    <div className={style.qeustionModal__headerText}>
+                    <div className={style.questionModal__headerText}>
                         Saved Question
                     </div>
                 </Modal.Header>
@@ -89,9 +111,9 @@ const QuestionModal = ({
                             <label className={style.questionModal__label}>
                                 Category:{" "}
                             </label>
-                            <text className={style.questionModal__text}>
+                            <div className={style.questionModal__text}>
                                 {question?.category}
-                            </text>
+                            </div>
                         </div>
                         {/* difficulty */}
                         <div
@@ -111,9 +133,9 @@ const QuestionModal = ({
                             <label className={style.questionModal__label}>
                                 Type:
                             </label>
-                            <text className={style.questionModal__text}>
+                            <div className={style.questionModal__text}>
                                 {question?.type}
-                            </text>
+                            </div>
                         </div>
                         {/* question */}
                         <div className={style.questionModal__verticalProperty}>
@@ -122,7 +144,9 @@ const QuestionModal = ({
                             </label>
                             <div className={style.questionModal__textBox}>
                                 <ReactMarkdown>
-                                    {question?.question}
+                                    {question
+                                        ? question.question.toString()
+                                        : ""}
                                 </ReactMarkdown>
                             </div>
                         </div>
@@ -157,41 +181,60 @@ const QuestionModal = ({
                                 ></textarea>
                             )}
                         </div>
-                        {/* answer */}
-                        {showAnswers && (
-                            <div
-                                className={
-                                    style.questionModal__verticalProperty
-                                }
+                        {!showAnswersLocally && (
+                            <Button
+                                className={style.questionModal__glowButton}
+                                variant="light"
+                                size="sm"
+                                onClick={handleShowAnswersLocally}
                             >
-                                <label className={style.questionModal__label}>
-                                    Answer:
-                                </label>
-                                <div className={style.questionModal__textBox}>
-                                    <ReactMarkdown>
-                                        {question?.answer}
-                                    </ReactMarkdown>
-                                </div>
-                            </div>
+                                Show Answers
+                            </Button>
                         )}
-                        {/* notes */}
-                        {showAnswers && (
-                            <div
-                                className={
-                                    style.questionModal__verticalProperty
-                                }
-                            >
-                                <label className={style.questionModal__label}>
-                                    Notes:
-                                </label>
-                                <textarea
-                                    className={style.questionModal__textBox}
-                                    rows={4}
-                                    cols={8}
-                                    value={newNotes}
-                                    onChange={handleNewNotesChanged}
-                                ></textarea>
-                            </div>
+
+                        {showAnswersLocally && (
+                            <>
+                                {/* answer */}
+                                <div
+                                    className={
+                                        style.questionModal__verticalProperty
+                                    }
+                                >
+                                    <label
+                                        className={style.questionModal__label}
+                                    >
+                                        Answer:
+                                    </label>
+                                    <div
+                                        className={style.questionModal__textBox}
+                                    >
+                                        <ReactMarkdown>
+                                            {question
+                                                ? question.answer.toString()
+                                                : ""}
+                                        </ReactMarkdown>
+                                    </div>
+                                </div>
+                                {/* notes */}
+                                <div
+                                    className={
+                                        style.questionModal__verticalProperty
+                                    }
+                                >
+                                    <label
+                                        className={style.questionModal__label}
+                                    >
+                                        Notes:
+                                    </label>
+                                    <textarea
+                                        className={style.questionModal__textBox}
+                                        rows={4}
+                                        cols={8}
+                                        value={newNotes}
+                                        onChange={handleNewNotesChanged}
+                                    ></textarea>
+                                </div>
+                            </>
                         )}
                     </div>
                 </Modal.Body>
@@ -200,7 +243,7 @@ const QuestionModal = ({
                         className={style.questionModal__glowButton}
                         variant="light"
                         size="lg"
-                        onClick={closeDialog}
+                        onClick={handleCloseDialogLocally}
                     >
                         Cancel
                     </Button>
@@ -208,12 +251,20 @@ const QuestionModal = ({
                         className={style.questionModal__glowButton}
                         variant="light"
                         size="lg"
-                        onClick={saveChanges}
+                        onClick={() => {
+                            setShowAnswersLocally(false);
+                            saveQuestionToServer(
+                                question,
+                                newUserAnswer,
+                                newNotes
+                            );
+                        }}
                     >
-                        Save Changes
+                        Save
                     </Button>
                 </Modal.Footer>
             </Modal>
+            {/* <ConfirmOverrideDialog /> */}
         </div>
     );
 };

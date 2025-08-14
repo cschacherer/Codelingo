@@ -29,30 +29,11 @@ export const generateQuestion = async (
     }
 };
 
-export const saveQuestion = async (
-    id: number,
-    category: Category | string,
-    difficulty: Difficulty | string,
-    type: Type | string,
-    question: string,
-    answer: string,
-    userAnswer: string,
-    notes: string
-) => {
+export const saveQuestion = async (question: SavedQuestion) => {
     try {
-        const questionData = {
-            id: id,
-            category: category,
-            difficulty: difficulty,
-            type: type,
-            question: question,
-            answer: answer,
-            userAnswer: userAnswer,
-            notes: notes,
-        };
         const response = await apiClient.post<SavedQuestion>(
             "/questions/save",
-            questionData
+            question
         );
         return response.data;
     } catch (error) {

@@ -3,7 +3,7 @@
     background: linear-gradient(-135deg, var(--gradient-blue), var(--gradient-purple));
 }
 
-.qeustionModal__headerText {
+.questionModal__headerText {
     font-size: 2rem;
     color: white;
     margin-left: 10px;

@@ -8,14 +8,14 @@ import { useAuth } from "../../context/authContext";
 import Header from "../../components/Header/Header";
 import QuestionModal from "../../components/QuestionModal/QuestionModal";
 import { saveQuestion } from "../../services/questionService";
-import { getCategoryFromString } from "../../models/Category";
 
 const SavedQuestionsPage = () => {
     const [questions, setQuestions] = useState<SavedQuestion[]>([]);
 
-    const [showQuestionModal, setShowQuestionModal] = useState(false);
-    const [questionModalDetails, setQuestionModalDetails] =
-        useState<SavedQuestion | null>(null);
+    const [showRetryDialog, setShowRetryDialog] = useState(false);
+    const [retryQuestion, setRetryQuestion] = useState<SavedQuestion | null>(
+        null
+    );
 
     const [showAnswers, setShowAnswers] = useState(false);
 
@@ -26,28 +26,30 @@ const SavedQuestionsPage = () => {
             const response = await getUser();
             console.log(response);
             setQuestions(response.savedQuestions);
-            setQuestionModalDetails(response.savedQuestions[0]);
         } catch (e) {
             console.log((e as Error).message);
         }
     };
 
-    const sendUpdatedQuestion = async (question: SavedQuestion) => {
+    const sendUpdatedQuestion = async (
+        question: SavedQuestion,
+        newUserAnswer: string,
+        newNotes: string
+    ) => {
         try {
-            const response = await saveQuestion(
-                question.id,
-                question.category,
-                question.difficulty,
-                question.type,
-                question.question,
-                question.answer,
-                question.userAnswer,
-                question.notes
-            );
+            question.answer = newUserAnswer;
+            question.notes = newNotes;
+            const response = await saveQuestion(question);
             await getUserData();
         } catch (e) {
             console.log((e as Error).message);
+        } finally {
+            setShowRetryDialog(false);
         }
+    };
+
+    const handleCloseRetryDialog = () => {
+        setShowRetryDialog(false);
     };
 
     useEffect(() => {
@@ -73,6 +75,7 @@ const SavedQuestionsPage = () => {
                         checked={showAnswers}
                         onChange={(e) => {
                             setShowAnswers(e.target.checked);
+                            setRetryQuestion(null);
                         }}
                     ></input>
                     <label className={style.savedQuestions__showAnswers}>
@@ -125,8 +128,8 @@ const SavedQuestionsPage = () => {
                                             }
                                             variant="light"
                                             onClick={() => {
-                                                setQuestionModalDetails(item);
-                                                setShowQuestionModal(true);
+                                                setRetryQuestion(item);
+                                                setShowRetryDialog(true);
                                             }}
                                         >
                                             Retry
@@ -137,13 +140,13 @@ const SavedQuestionsPage = () => {
                         })}
                     </tbody>
                 </table>
-                {showQuestionModal && (
-                    <QuestionModal
-                        question={questionModalDetails}
-                        sendUpdatedQuestion={sendUpdatedQuestion}
-                        showAnswers={showAnswers}
-                    ></QuestionModal>
-                )}
+                <QuestionModal
+                    showDialog={showRetryDialog}
+                    question={retryQuestion}
+                    saveQuestionToServer={sendUpdatedQuestion}
+                    showAnswers={showAnswers}
+                    handleCloseDialog={handleCloseRetryDialog}
+                ></QuestionModal>
             </div>
         </div>
     );

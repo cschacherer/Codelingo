@@ -10,8 +10,19 @@
     border-bottom: none;
 }
 
-.about__text {
+.about__contentContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border: 1px solid var(--darker-gray);
+}
+
+.about__owlIcon {
+    width: 200px;
+    height: 200px;
+}
+
+.about__text {
     padding: 20px;
-    font-size: 1.2rem;
+        font-size: 1.2rem;
 }

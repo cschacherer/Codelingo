@@ -79,6 +79,12 @@ const CodeEditor = ({
     }
 
     useEffect(() => {
+        console.log(
+            "Initializing CodeMirror...",
+            editorRef.current,
+            questionCategory
+        );
+
         if (!editorRef.current) return;
 
         // Initialize CodeMirror
@@ -166,18 +172,14 @@ const CodeEditor = ({
         };
     }, [questionCategory]);
 
-    //clear text even if question category hasn't changed
     useEffect(() => {
-        if (userAnswer == "") {
-            if (viewRef.current) {
-                viewRef.current.dispatch({
-                    changes: {
-                        from: 0,
-                        to: viewRef.current.state.doc.length,
-                        insert: userAnswer,
-                    },
-                });
-            }
+        if (!viewRef.current) return;
+
+        const currentDoc = viewRef.current.state.doc.toString();
+        if (userAnswer !== currentDoc) {
+            viewRef.current.dispatch({
+                changes: { from: 0, to: currentDoc.length, insert: userAnswer },
+            });
         }
     }, [userAnswer]);
 

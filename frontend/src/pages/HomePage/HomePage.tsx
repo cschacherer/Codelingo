@@ -11,14 +11,22 @@ import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
 import style from "./HomePage.module.css";
+import { useNavigate, useNavigation } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
+import useConfirm from "../../components/ConfirmDialog/ConfirmDialog";
+import QuestionModal from "../../components/QuestionModal/QuestionModal";
+import { SavedQuestion } from "../../models/SavedQuestion";
 
 const HomePage = () => {
     let auth = useAuth();
+    let navigate = useNavigate();
 
     let useDefaultQuestion = false; //will use one question over and over again, instead of constantly asking and loading a new question from the llm
 
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
+
+    const [userAnswer, setUserAnswer] = useState("");
 
     //these variables are updated when the dropdown selection changes
     //These are the default question values when the home page is first loaded
@@ -39,8 +47,11 @@ const HomePage = () => {
 
     const [isLoading, setIsLoading] = useState(false);
 
+    //variables to handle saving the question
     const [questionIsSaved, setQuestionIsSaved] = useState(false);
-    const [currentQuestionId, setCurrentQuestionId] = useState<number>(-1);
+    const [showSaveQuestionDialog, setShowSaveQuestionDialog] = useState(false);
+    const [selectedSavedQuestion, setSelectedSavedQuestion] =
+        useState<SavedQuestion | null>(null);
 
     const generateQuestionFunction = async (
         category: Category,
@@ -51,6 +62,7 @@ const HomePage = () => {
             if (useDefaultQuestion) {
                 setQuestion(Defaults.question);
                 setAnswer(Defaults.answer);
+                setUserAnswer("");
 
                 setSelectedCategory(Defaults.category);
                 setSelectedDifficulty(Defaults.difficulty);
@@ -75,6 +87,7 @@ const HomePage = () => {
 
             setQuestion(data.question);
             setAnswer(data.answer);
+            setUserAnswer("");
             setQuestionCategory(category);
             setQuestionDifficulty(difficulty);
             setQuestionType(type);
@@ -85,34 +98,60 @@ const HomePage = () => {
         } finally {
             setIsLoading(false);
             setQuestionIsSaved(false);
+            setSelectedSavedQuestion(null);
         }
     };
 
-    const saveQuestionFunction = async (
+    const showSaveQuestionDialogFunction = async (
         formattedQuestion: string,
-        formattedAnswer: string,
-        userAnswer: string
+        formattedAnswer: string
     ) => {
         try {
-            if (currentQuestionId !== -1) {
-                //ask to override question
+            if (!auth.loggedIn) {
+                navigate("login");
             }
-            const data = await saveQuestion(
-                currentQuestionId,
-                selectedCategory,
-                selectedDifficulty,
-                selectedType,
-                formattedQuestion,
-                formattedAnswer,
-                userAnswer,
-                ""
-            );
-            setQuestionIsSaved(true);
-            // setCurrentQuestionId(data.id);
+            const questionValues: SavedQuestion = {
+                id: selectedSavedQuestion ? selectedSavedQuestion.id : -1,
+                category: selectedCategory,
+                difficulty: selectedDifficulty,
+                type: selectedType,
+                question: formattedQuestion,
+                answer: formattedAnswer,
+                userAnswer: userAnswer,
+                notes: selectedSavedQuestion ? selectedSavedQuestion.notes : "",
+            };
+            setSelectedSavedQuestion(questionValues);
+            setShowSaveQuestionDialog(true);
         } catch (err) {
             let msg = getErrorMessage(err);
             console.log(msg);
-            // setQuestionIsSaved(false);
+            setShowSaveQuestionDialog(false);
+        }
+    };
+
+    const saveQuestionToServer = async (
+        passedQuestion: SavedQuestion,
+        newUserAnswer: string,
+        newNotes: string
+    ) => {
+        try {
+            //only need the user answer or notes since that is the only thing that is editable
+            if (!passedQuestion) {
+                return;
+            }
+            passedQuestion.userAnswer = newUserAnswer;
+            passedQuestion.notes = newNotes;
+            const data = await saveQuestion(passedQuestion);
+            if (userAnswer !== newUserAnswer)
+                // setSelectedSavedQuestion(question);
+                setUserAnswer(newUserAnswer); //in case the answer was modified in the Save Question Modal Dialog, update it on home page
+            setQuestionIsSaved(true);
+        } catch (err) {
+            let msg = getErrorMessage(err);
+            console.log(msg);
+            setQuestionIsSaved(false);
+        } finally {
+            setShowSaveQuestionDialog(false);
         }
     };
 
@@ -132,6 +171,10 @@ const HomePage = () => {
         setCustomCategory(newValue);
     };
 
+    const updateUserAnswerChanged = (newValue: string) => {
+        setUserAnswer(newValue);
+    };
+
     const questionOptions: QuestionOptions = {
         categoryLabel: "Categories",
         categoryOptions: Object.values(Category) as Category[],
@@ -147,41 +190,59 @@ const HomePage = () => {
             selectedDifficulty,
             selectedType
         );
+        auth.loginUser("admin", "admin123");
     }, []);
 
     return (
-        <div className={style.homePage__container}>
-            <div className={style.homePage__sideBarColumn}>
-                <SideBar
-                    options={questionOptions}
-                    selectedCategory={selectedCategory}
-                    customCategory={customCategory}
-                    selectedDifficulty={selectedDifficulty}
-                    selectedType={selectedType}
-                    handleCategoryChange={updateCategoryChanged}
-                    handleCustomCategoryChange={updateCustomCategoryChanged}
-                    handleDifficultyChange={updateDifficultyChanged}
-                    handleTypeChange={updateTypeChanged}
-                    handleOnClick={generateQuestionFunction}
-                    loading={isLoading}
-                ></SideBar>
+        <>
+            <div className={style.homePage__container}>
+                <div className={style.homePage__sideBarColumn}>
+                    <SideBar
+                        options={questionOptions}
+                        selectedCategory={selectedCategory}
+                        customCategory={customCategory}
+                        selectedDifficulty={selectedDifficulty}
+                        selectedType={selectedType}
+                        handleCategoryChange={updateCategoryChanged}
+                        handleCustomCategoryChange={updateCustomCategoryChanged}
+                        handleDifficultyChange={updateDifficultyChanged}
+                        handleTypeChange={updateTypeChanged}
+                        handleOnClick={generateQuestionFunction}
+                        loading={isLoading}
+                    ></SideBar>
+                </div>
+                <div className={style.homePage__questionColumn}>
+                    <NavigationBar
+                        loggedIn={auth.loggedIn}
+                        onUserPage={false}
+                    ></NavigationBar>
+                    <QuestionContainer
+                        question={question}
+                        answer={answer}
+                        questionCategory={questionCategory}
+                        questionDifficulty={questionDifficulty}
+                        questionType={questionType}
+                        handleSaveQuestion={showSaveQuestionDialogFunction}
+                        isSaved={questionIsSaved}
+                        userAnswer={userAnswer}
+                        handleUserAnswerChanged={updateUserAnswerChanged}
+                    ></QuestionContainer>
+                </div>
+                {/* need to wait for selectedSavedQuestion to be a valid value, otherwise it causes issues when 
+            rendering QuestionModal */}
+                {selectedSavedQuestion && showSaveQuestionDialog && (
+                    <QuestionModal
+                        showDialog={showSaveQuestionDialog}
+                        question={selectedSavedQuestion}
+                        saveQuestionToServer={saveQuestionToServer}
+                        showAnswers={true}
+                        handleCloseDialog={() =>
+                            setShowSaveQuestionDialog(false)
+                        }
+                    ></QuestionModal>
+                )}
             </div>
-            <div className={style.homePage__questionColumn}>
-                <NavigationBar
-                    loggedIn={auth.loggedIn}
-                    onUserPage={false}
-                ></NavigationBar>
-                <QuestionContainer
-                    question={question}
-                    answer={answer}
-                    questionCategory={questionCategory}
-                    questionDifficulty={questionDifficulty}
-                    questionType={questionType}
-                    handleSaveQuestion={saveQuestionFunction}
-                    isSaved={questionIsSaved}
-                ></QuestionContainer>
-            </div>
-        </div>
+        </>
     );
 };
 

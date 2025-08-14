@@ -2,6 +2,7 @@ import style from "./AboutPage.module.css";
 import Header from "../../components/Header/Header";
 import { useAuth } from "../../context/authContext";
 import NavigationBar from "../../components/Navigation/NavigationBar";
+import owlIcon from "../../assets/owlIcon.png";
 
 const AboutPage = () => {
     const auth = useAuth();
@@ -25,10 +26,13 @@ const AboutPage = () => {
                 <div className={style.about__headerBackground}>
                     <Header title="About" defaultBackground={true}></Header>
                 </div>
-                <p className={style.about__text}>
-                    {aboutText} <br /> <br />
-                    {contactText}
-                </p>
+                <div className={style.about__contentContainer}>
+                    <img src={owlIcon} className={style.about__owlIcon}></img>
+                    <p className={style.about__text}>
+                        {aboutText} <br /> <br />
+                        {contactText}
+                    </p>
+                </div>
             </div>
         </div>
     );
