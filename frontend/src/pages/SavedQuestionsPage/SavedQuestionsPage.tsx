@@ -7,7 +7,12 @@ import NavigationBar from "../../components/Navigation/NavigationBar";
 import { useAuth } from "../../context/authContext";
 import Header from "../../components/Header/Header";
 import QuestionModal from "../../components/QuestionModal/QuestionModal";
-import { saveQuestion, deleteQuestion } from "../../services/questionService";
+import {
+    saveQuestion,
+    deleteQuestion,
+    analyzeAnswer,
+} from "../../services/questionService";
+import useConfirm from "../../components/ConfirmDialog/ConfirmDialog";
 
 const SavedQuestionsPage = () => {
     const [questions, setQuestions] = useState<SavedQuestion[]>([]);
@@ -17,9 +22,11 @@ const SavedQuestionsPage = () => {
         null
     );
 
-    const [showAnswers, setShowAnswers] = useState(true);
+    const [showAnswers, setShowAnswers] = useState(false);
 
     const auth = useAuth();
+
+    const [confirmDelete, ConfirmDeleteDialog] = useConfirm();
 
     const getUserData = async () => {
         try {
@@ -34,11 +41,13 @@ const SavedQuestionsPage = () => {
     const sendUpdatedQuestion = async (
         question: SavedQuestion,
         newUserAnswer: string,
-        newNotes: string
+        newNotes: string,
+        newAnalyzedAnswer: string
     ) => {
         try {
             question.userAnswer = newUserAnswer;
             question.notes = newNotes;
+            question.analyzedAnswer = newAnalyzedAnswer;
             const response = await saveQuestion(question);
             await getUserData();
         } catch (e) {
@@ -48,8 +57,29 @@ const SavedQuestionsPage = () => {
         }
     };
 
+    const analyzeUserAnswer = async (
+        question: SavedQuestion,
+        newUserAnswer: string
+    ) => {
+        try {
+            const response = await analyzeAnswer(
+                question.category,
+                question.question,
+                question.answer,
+                newUserAnswer
+            );
+            return response;
+        } catch (e) {
+            console.log((e as Error).message);
+        }
+    };
+
     const handleDeleteQuestion = async (questionId: number) => {
         try {
+            const confirm = await confirmDelete(
+                "Are you sure you want to permanently delete this question?"
+            );
+            if (!confirm) return;
             const response = await deleteQuestion(questionId);
             await getUserData();
         } catch (e) {
@@ -94,13 +124,62 @@ const SavedQuestionsPage = () => {
                 <table className={style.savedQuestions__table}>
                     <thead className={style.savedQuestions__colHeader}>
                         <tr>
-                            <th scope="col">Category</th>
-                            <th scope="col">Difficulty</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Question</th>
-                            {showAnswers && <th scope="col">Your Answer</th>}
-                            {showAnswers && <th scope="col">Answer</th>}
-                            {showAnswers && <th scope="col">Notes</th>}
+                            <th
+                                className={style.savedQuestions__width5}
+                                scope="col"
+                            >
+                                Category
+                            </th>
+                            <th
+                                className={style.savedQuestions__width5}
+                                scope="col"
+                            >
+                                Difficulty
+                            </th>
+                            <th
+                                className={style.savedQuestions__width5}
+                                scope="col"
+                            >
+                                Type
+                            </th>
+                            <th
+                                className={style.savedQuestions__colQuestion}
+                                scope="col"
+                            >
+                                Question
+                            </th>
+                            {showAnswers && (
+                                <th
+                                    className={style.savedQuestions__width15}
+                                    scope="col"
+                                >
+                                    Your Answer
+                                </th>
+                            )}
+                            {showAnswers && (
+                                <th
+                                    className={style.savedQuestions__width15}
+                                    scope="col"
+                                >
+                                    Answer Analysis
+                                </th>
+                            )}
+                            {showAnswers && (
+                                <th
+                                    className={style.savedQuestions__width15}
+                                    scope="col"
+                                >
+                                    Answer
+                                </th>
+                            )}
+                            {showAnswers && (
+                                <th
+                                    className={style.savedQuestions__width5}
+                                    scope="col"
+                                >
+                                    Notes
+                                </th>
+                            )}
                             <th
                                 className={
                                     style.savedQuestions__hiddenColHeader
@@ -119,25 +198,65 @@ const SavedQuestionsPage = () => {
                         {questions?.map((item) => {
                             return (
                                 <tr key={item.id}>
-                                    <td width="5%">{item.category}</td>
-                                    <td width="5%">{item.difficulty}</td>
-                                    <td width="5%">{item.type}</td>
-                                    {showAnswers ? (
-                                        <td width="25%">{item.question}</td>
-                                    ) : (
-                                        <td width="100%">{item.question}</td>
+                                    <td
+                                        className={style.savedQuestions__width5}
+                                    >
+                                        {item.category}
+                                    </td>
+                                    <td
+                                        className={style.savedQuestions__width5}
+                                    >
+                                        {item.difficulty}
+                                    </td>
+                                    <td
+                                        className={style.savedQuestions__width5}
+                                    >
+                                        {item.type}
+                                    </td>
+                                    <td
+                                        className={
+                                            style.savedQuestions__colQuestion
+                                        }
+                                    >
+                                        {item.question}
+                                    </td>
+                                    {showAnswers && (
+                                        <td
+                                            className={
+                                                style.savedQuestions__width15
+                                            }
+                                        >
+                                            {item.userAnswer}
+                                        </td>
                                     )}
                                     {showAnswers && (
-                                        <td width="25%">{item.userAnswer}</td>
+                                        <td
+                                            className={
+                                                style.savedQuestions__width15
+                                            }
+                                        >
+                                            {item.analyzedAnswer}
+                                        </td>
                                     )}
                                     {showAnswers && (
-                                        <td width="25%">{item.answer}</td>
+                                        <td
+                                            className={
+                                                style.savedQuestions__width15
+                                            }
+                                        >
+                                            {item.answer}
+                                        </td>
                                     )}
                                     {showAnswers && (
-                                        <td width="25%">{item.notes}</td>
+                                        <td
+                                            className={
+                                                style.savedQuestions__width5
+                                            }
+                                        >
+                                            {item.notes}
+                                        </td>
                                     )}
                                     <td
-                                        width="auto"
                                         className={
                                             style.savedQuestions__buttonCell
                                         }
@@ -152,11 +271,10 @@ const SavedQuestionsPage = () => {
                                                 setShowRetryDialog(true);
                                             }}
                                         >
-                                            Retry
+                                            {showAnswers ? "View" : "Retry"}
                                         </Button>
                                     </td>
                                     <td
-                                        width="auto"
                                         className={
                                             style.savedQuestions__buttonCell
                                         }
@@ -184,7 +302,9 @@ const SavedQuestionsPage = () => {
                     saveQuestionToServer={sendUpdatedQuestion}
                     showAnswers={showAnswers}
                     handleCloseDialog={handleCloseRetryDialog}
+                    handleAnalyzeAnswer={analyzeUserAnswer}
                 ></QuestionModal>
+                <ConfirmDeleteDialog />
             </div>
         </div>
     );

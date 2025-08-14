@@ -8,6 +8,7 @@ import CodeEditor from "../CodeEditor/CodeEditor";
 import { getCategoryFromString } from "../../models/Category";
 import useConfirm from "../ConfirmDialog/ConfirmDialog";
 import GlowButton from "../GlowButton/GlowButton";
+import { getErrorMessage } from "../../utils/utils";
 
 interface Props {
     showDialog: boolean;
@@ -15,10 +16,15 @@ interface Props {
     saveQuestionToServer: (
         question: SavedQuestion,
         newUserAnswer: string,
-        newNotes: string
+        newNotes: string,
+        newAnalysis: string
     ) => void;
     showAnswers: boolean;
     handleCloseDialog: () => void;
+    handleAnalyzeAnswer: (
+        question: SavedQuestion,
+        newUserAnswer: string
+    ) => Promise<string> | Promise<void>;
 }
 
 const QuestionModal = ({
@@ -27,6 +33,7 @@ const QuestionModal = ({
     saveQuestionToServer,
     showAnswers,
     handleCloseDialog,
+    handleAnalyzeAnswer,
 }: Props) => {
     if (!question) return null;
 
@@ -34,8 +41,11 @@ const QuestionModal = ({
         showAnswers && question ? question.userAnswer : ""
     );
     const [newNotes, setNewNotes] = useState<string>(question?.notes ?? "");
-
+    const [newAnalyzedAnswer, setNewAnalyzedAnswer] = useState<string>(
+        question?.analyzedAnswer ?? ""
+    );
     const [showAnswersLocally, setShowAnswersLocally] = useState(showAnswers);
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
 
     const [confirmOverride, ConfirmOverrideDialog] = useConfirm();
 
@@ -55,6 +65,25 @@ const QuestionModal = ({
         setNewNotes(prop.target.value);
     };
 
+    const handleAnalyzeAnswerLocally = async () => {
+        try {
+            setIsAnalyzing(true);
+            const newAnalysis = await handleAnalyzeAnswer(
+                question,
+                newUserAnswer
+            );
+            if (typeof newAnalysis === "string") {
+                setNewAnalyzedAnswer(newAnalysis);
+            }
+            setShowAnswersLocally(true);
+        } catch (e) {
+            let msg = getErrorMessage(e);
+            setNewAnalyzedAnswer(msg);
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
+
     const handleShowAnswersLocally = () => {
         setNewNotes(question.notes);
         setShowAnswersLocally(true);
@@ -70,7 +99,12 @@ const QuestionModal = ({
     const handleSaveClicked = async () => {
         //handle saving a brand new question
         if (question.id === -1) {
-            await saveQuestionToServer(question, newUserAnswer, newNotes);
+            await saveQuestionToServer(
+                question,
+                newUserAnswer,
+                newNotes,
+                newAnalyzedAnswer
+            );
         } else {
             //handle saving changes to an existing question in the home page or saved questions page
             if (showAnswersLocally) {
@@ -96,18 +130,23 @@ const QuestionModal = ({
             }
 
             setShowAnswersLocally(false);
-            await saveQuestionToServer(question, newUserAnswer, newNotes);
+            await saveQuestionToServer(
+                question,
+                newUserAnswer,
+                newNotes,
+                newAnalyzedAnswer
+            );
         }
     };
 
     useEffect(() => {
         if (question) {
+            setNewNotes(question.notes);
+            setNewAnalyzedAnswer(question.analyzedAnswer);
             if (showAnswers) {
                 setNewUserAnswer(question.userAnswer);
-                setNewNotes(question.notes);
                 setShowAnswersLocally(true);
             } else {
-                setNewNotes(question.notes);
                 setShowAnswersLocally(false);
             }
         } else {
@@ -121,6 +160,7 @@ const QuestionModal = ({
                 size="lg"
                 show={showDialog}
                 onHide={handleCloseDialogLocally}
+                backdrop="static"
             >
                 <Modal.Header
                     className={style.questionModal__header}
@@ -212,18 +252,57 @@ const QuestionModal = ({
                         {!showAnswersLocally && (
                             <div
                                 className={
-                                    style.questionModal__showAnswersButton
+                                    style.questionModal__answerButtonsContainer
                                 }
                             >
-                                <GlowButton
-                                    text="Show Answers"
-                                    handleOnClick={handleShowAnswersLocally}
-                                ></GlowButton>
+                                {/* analyze answer button */}
+                                <div
+                                    className={
+                                        style.questionModal__showAnswersButton
+                                    }
+                                >
+                                    <GlowButton
+                                        text="Analyze Answer"
+                                        handleOnClick={
+                                            handleAnalyzeAnswerLocally
+                                        }
+                                        loading={isAnalyzing}
+                                        loadingText="Analyzing Answer"
+                                    ></GlowButton>
+                                </div>
+                                {/* show answers button */}
+                                <div
+                                    className={
+                                        style.questionModal__showAnswersButton
+                                    }
+                                >
+                                    <GlowButton
+                                        text="Show Answers"
+                                        handleOnClick={handleShowAnswersLocally}
+                                    ></GlowButton>
+                                </div>
                             </div>
                         )}
 
                         {showAnswersLocally && (
                             <>
+                                {/* answer analysis*/}
+                                <div
+                                    className={
+                                        style.questionModal__verticalProperty
+                                    }
+                                >
+                                    <label
+                                        className={style.questionModal__label}
+                                    >
+                                        Analyzed Answer:
+                                    </label>
+                                    <div
+                                        className={style.questionModal__textBox}
+                                    >
+                                        {newAnalyzedAnswer}
+                                    </div>
+                                </div>
                                 {/* answer */}
                                 <div
                                     className={

@@ -51,6 +51,7 @@ class SavedQuestion(db.Model):
     answer: str = db.Column(db.String, nullable=False)
     userAnswer: str = db.Column(db.String)
     notes: str = db.Column(db.String)
+    analyzedAnswer: str = db.Column(db.String)
     userId: int = db.Column(db.Integer, ForeignKey("users.id"), nullable=False)
 
     # compare values between two questions, except for id
@@ -65,6 +66,7 @@ class SavedQuestion(db.Model):
                 and self.answer == other.answer
                 and self.userAnswer == other.userAnswer
                 and self.notes == other.notes
+                and self.analyzedAnswer == other.analyzedAnswer
                 and self.userId == other.userId
             )
         return False
@@ -79,9 +81,11 @@ class SavedQuestion(db.Model):
             "answer": self.answer,
             "userAnswer": self.userAnswer,
             "notes": self.notes,
+            "analyzedAnswer": self.analyzedAnswer,
             "userId": self.userId,
         }
 
-    def updateQuestion(self, newAnswer, newNotes):
+    def updateQuestion(self, newAnswer, newNotes, analyzedAnswer):
         self.userAnswer = newAnswer
         self.notes = newNotes
+        self.analyzedAnswer = analyzedAnswer

@@ -7,4 +7,5 @@ export type SavedQuestion = {
     answer: string;
     userAnswer: string;
     notes: string;
+    analyzedAnswer: string;
 };

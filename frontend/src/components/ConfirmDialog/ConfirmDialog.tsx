@@ -38,20 +38,12 @@ const useConfirm = () => {
                 <Modal.Title>Confirm</Modal.Title>
             </Modal.Header>
             <Modal.Body>{message}</Modal.Body>
-            <Modal.Footer className={style.questionModal__footer}>
-                <Button
-                    className={style.questionModal__glowButton}
-                    variant="light"
-                    onClick={() => onClick(false)}
-                >
+            <Modal.Footer className={style.confirmDialog__footer}>
+                <Button variant="light" onClick={() => onClick(false)}>
                     Cancel
                 </Button>
-                <Button
-                    className={style.questionModal__glowButton}
-                    variant="light"
-                    onClick={() => onClick(true)}
-                >
-                    OK
+                <Button variant="light" onClick={() => onClick(true)}>
+                    Confirm
                 </Button>
             </Modal.Footer>
         </Modal>

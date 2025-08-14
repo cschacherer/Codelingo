@@ -110,6 +110,12 @@ const HomePage = () => {
 
     const analyzeUserAnswer = async () => {
         try {
+            if (userAnswer === "") {
+                setAnalyzedAnswer(
+                    "You must write something for your answer to be analyzed."
+                );
+                return;
+            }
             setAnalyzeAnswerLoading(true);
             const response = await analyzeAnswer(
                 selectedCategory,
@@ -144,6 +150,7 @@ const HomePage = () => {
                 answer: formattedAnswer,
                 userAnswer: userAnswer,
                 notes: selectedSavedQuestion ? selectedSavedQuestion.notes : "",
+                analyzedAnswer: analyzedAnswer,
             };
             setSelectedSavedQuestion(questionValues);
             setShowSaveQuestionDialog(true);
@@ -157,7 +164,8 @@ const HomePage = () => {
     const saveQuestionToServer = async (
         passedQuestion: SavedQuestion,
         newUserAnswer: string,
-        newNotes: string
+        newNotes: string,
+        newAnalyzedAnswer: string
     ) => {
         try {
             //only need the user answer or notes since that is the only thing that is editable
@@ -166,6 +174,7 @@ const HomePage = () => {
             }
             passedQuestion.userAnswer = newUserAnswer;
             passedQuestion.notes = newNotes;
+            passedQuestion.analyzedAnswer = newAnalyzedAnswer;
             const data = await saveQuestion(passedQuestion);
             if (userAnswer !== newUserAnswer) setUserAnswer(newUserAnswer); //in case the answer was modified in the Save Question Modal Dialog, update it on home page
             setQuestionIsSaved(true);
@@ -265,6 +274,7 @@ const HomePage = () => {
                         handleCloseDialog={() =>
                             setShowSaveQuestionDialog(false)
                         }
+                        handleAnalyzeAnswer={analyzeUserAnswer}
                     ></QuestionModal>
                 )}
             </div>

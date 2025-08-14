@@ -34,7 +34,7 @@
 .questionModal__label {
     font-weight: 700;
     font-size: 1.1rem;
-    width: 15%;
+    width: 20%;
     margin-bottom: 5px;
 }
 
@@ -62,8 +62,12 @@
     margin: 0px !important;
 }
 
+.questionModal__answerButtonsContainer {
+    display: flex;
+    justify-content: center;
+}
+
 .questionModal__showAnswersButton {
-    width: 100%;
     display: flex; 
     justify-content: center;
 }
@@ -76,7 +80,6 @@
     display: flex;
     justify-content: space-between;
     background-color: white;
-    margin: 0px 10px;
-    
+    margin: 0px 10px; 
 }
 

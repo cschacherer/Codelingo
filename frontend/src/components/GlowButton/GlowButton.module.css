@@ -55,9 +55,14 @@ stuff to do with glow button */
     color: black;
 }
 
+.glowButton__contentContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .glowButton__loadSpinner {
     margin-right: 10px;
-    vertical-align: baseline;
 }
 
 @keyframes glowing {

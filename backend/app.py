@@ -365,7 +365,6 @@ def createApp(testing=False):
             analyzedAnswer = communicator.analyzeAnswer(
                 category, question, officialAnswer, userAnswer
             )
-            # parsedJsonData = json.loads(questionData)
 
             return (
                 jsonify(
@@ -391,7 +390,8 @@ def createApp(testing=False):
         if existingQuestion:
             userAnswer = data.get("userAnswer")
             notes = data.get("notes")
-            existingQuestion.updateQuestion(userAnswer, notes)
+            analyzedAnswer = data.get("analyzedAnswer")
+            existingQuestion.updateQuestion(userAnswer, notes, analyzedAnswer)
             db.session.commit()
             return jsonify(question=existingQuestion.to_dict()), 201
 
@@ -404,6 +404,7 @@ def createApp(testing=False):
             answer=data.get("answer"),
             userAnswer=data.get("userAnswer"),
             notes=data.get("notes"),
+            analyzedAnswer=data.get("analyzedAnswer"),
             userId=currentUserId,
         )
         db.session.add(question)

@@ -51,6 +51,7 @@ class DatabaseSeeder:
                     answer="correct chatgpt answer",
                     userAnswer="user answer",
                     notes="this is a note",
+                    analyzedAnswer="",
                     userId=1,
                 ),
                 SavedQuestion(
@@ -61,6 +62,7 @@ class DatabaseSeeder:
                     answer="correct chatgpt answer",
                     userAnswer="user answer",
                     notes="this is a note for question 2",
+                    analyzedAnswer="test filling analyzed answer value in",
                     userId=1,
                 ),
             ]
