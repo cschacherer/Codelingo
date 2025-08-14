@@ -142,9 +142,7 @@ const HomePage = () => {
             passedQuestion.userAnswer = newUserAnswer;
             passedQuestion.notes = newNotes;
             const data = await saveQuestion(passedQuestion);
-            if (userAnswer !== newUserAnswer)
-                // setSelectedSavedQuestion(question);
-                setUserAnswer(newUserAnswer); //in case the answer was modified in the Save Question Modal Dialog, update it on home page
+            if (userAnswer !== newUserAnswer) setUserAnswer(newUserAnswer); //in case the answer was modified in the Save Question Modal Dialog, update it on home page
             setQuestionIsSaved(true);
         } catch (err) {
             let msg = getErrorMessage(err);

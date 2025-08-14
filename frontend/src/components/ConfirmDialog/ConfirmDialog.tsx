@@ -33,13 +33,15 @@ const useConfirm = () => {
     };
 
     const ConfirmDialog: React.FC = () => (
-        <Modal size="sm" show={showDialog}>
+        <Modal show={showDialog} centered>
+            <Modal.Header>
+                <Modal.Title>Confirm</Modal.Title>
+            </Modal.Header>
             <Modal.Body>{message}</Modal.Body>
             <Modal.Footer className={style.questionModal__footer}>
                 <Button
                     className={style.questionModal__glowButton}
                     variant="light"
-                    size="lg"
                     onClick={() => onClick(false)}
                 >
                     Cancel
@@ -47,7 +49,6 @@ const useConfirm = () => {
                 <Button
                     className={style.questionModal__glowButton}
                     variant="light"
-                    size="lg"
                     onClick={() => onClick(true)}
                 >
                     OK

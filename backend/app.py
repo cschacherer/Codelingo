@@ -393,6 +393,20 @@ def createApp(testing=False):
             return jsonify(message="No question found."), 404
         return jsonify(question=question.to_dict()), 200
 
+    @app.route("/questions/<questionId>", methods=["DELETE"])
+    @jwt_required()
+    def deleteQuestion(questionId):
+        currentUserId = get_jwt_identity()
+        question = SavedQuestion.query.filter_by(
+            userId=currentUserId,
+            id=questionId,
+        ).first()
+        if not question:
+            return jsonify(message="No question found."), 404
+        db.session.delete(question)
+        db.session.commit()
+        return jsonify(message="Question has been deleted"), 200
+
     # endregion
 
     return app

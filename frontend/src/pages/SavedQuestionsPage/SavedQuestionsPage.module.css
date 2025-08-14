@@ -18,6 +18,11 @@
     background-color: rgb(201, 201, 201)
 }
 
+.savedQuestions__hiddenColHeader {
+    background-color: white; 
+    border: none;
+}
+
 .savedQuestions__button {
     background-color: var(--gray-background);
     width: 100%;
@@ -30,11 +35,8 @@ td {
 }
 
 .savedQuestions__buttonCell {
-    display: flex;
-    justify-content: center;
-    height: 100%;
-    border: none;
-    align-items: center;
+    border: none; 
+    padding-right: 0px;
 }
 
 .savedQuestions__retryHeader {

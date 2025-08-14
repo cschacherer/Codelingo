@@ -66,3 +66,16 @@ export const getAllQuestions = async () => {
         throw new Error(msg);
     }
 };
+
+export const deleteQuestion = async (questionId: number) => {
+    try {
+        const response = await apiClient.delete<SavedQuestion>(
+            `/questions/${questionId}`
+        );
+        return response.data;
+    } catch (error) {
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
+    }
+};

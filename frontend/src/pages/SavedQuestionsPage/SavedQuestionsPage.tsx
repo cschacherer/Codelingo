@@ -7,7 +7,7 @@ import NavigationBar from "../../components/Navigation/NavigationBar";
 import { useAuth } from "../../context/authContext";
 import Header from "../../components/Header/Header";
 import QuestionModal from "../../components/QuestionModal/QuestionModal";
-import { saveQuestion } from "../../services/questionService";
+import { saveQuestion, deleteQuestion } from "../../services/questionService";
 
 const SavedQuestionsPage = () => {
     const [questions, setQuestions] = useState<SavedQuestion[]>([]);
@@ -37,7 +37,7 @@ const SavedQuestionsPage = () => {
         newNotes: string
     ) => {
         try {
-            question.answer = newUserAnswer;
+            question.userAnswer = newUserAnswer;
             question.notes = newNotes;
             const response = await saveQuestion(question);
             await getUserData();
@@ -45,6 +45,15 @@ const SavedQuestionsPage = () => {
             console.log((e as Error).message);
         } finally {
             setShowRetryDialog(false);
+        }
+    };
+
+    const handleDeleteQuestion = async (questionId: number) => {
+        try {
+            const response = await deleteQuestion(questionId);
+            await getUserData();
+        } catch (e) {
+            console.log((e as Error).message);
         }
     };
 
@@ -92,7 +101,18 @@ const SavedQuestionsPage = () => {
                             {showAnswers && <th scope="col">Your Answer</th>}
                             {showAnswers && <th scope="col">Answer</th>}
                             {showAnswers && <th scope="col">Notes</th>}
-                            <th scope="col">Retry</th>
+                            <th
+                                className={
+                                    style.savedQuestions__hiddenColHeader
+                                }
+                                scope="col"
+                            ></th>
+                            <th
+                                className={
+                                    style.savedQuestions__hiddenColHeader
+                                }
+                                scope="col"
+                            ></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -133,6 +153,24 @@ const SavedQuestionsPage = () => {
                                             }}
                                         >
                                             Retry
+                                        </Button>
+                                    </td>
+                                    <td
+                                        width="auto"
+                                        className={
+                                            style.savedQuestions__buttonCell
+                                        }
+                                    >
+                                        <Button
+                                            className={
+                                                style.savedQuestions__button
+                                            }
+                                            variant="light"
+                                            onClick={() =>
+                                                handleDeleteQuestion(item.id)
+                                            }
+                                        >
+                                            Delete
                                         </Button>
                                     </td>
                                 </tr>

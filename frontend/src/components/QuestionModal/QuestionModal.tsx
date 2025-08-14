@@ -33,13 +33,11 @@ const QuestionModal = ({
     const [newUserAnswer, setNewUserAnswer] = useState<string>(
         showAnswers && question ? question.userAnswer : ""
     );
-    const [newNotes, setNewNotes] = useState<string>(
-        showAnswers && question ? question.notes : ""
-    );
+    const [newNotes, setNewNotes] = useState<string>(question?.notes ?? "");
 
     const [showAnswersLocally, setShowAnswersLocally] = useState(showAnswers);
 
-    //const [confirmOverride, ConfirmOverrideDialog] = useConfirm();
+    const [confirmOverride, ConfirmOverrideDialog] = useConfirm();
 
     const handleNewUserAnswerChanged = (
         prop: string | React.ChangeEvent<HTMLTextAreaElement>
@@ -69,6 +67,39 @@ const QuestionModal = ({
         handleCloseDialog();
     };
 
+    const handleSaveClicked = async () => {
+        //handle saving a brand new question
+        if (question.id === -1) {
+            await saveQuestionToServer(question, newUserAnswer, newNotes);
+        } else {
+            //handle saving changes to an existing question in the home page or saved questions page
+            if (showAnswersLocally) {
+                if (
+                    newUserAnswer === question.userAnswer &&
+                    newNotes === question.notes
+                ) {
+                    handleCloseDialogLocally();
+                    return;
+                }
+            } else {
+                if (newUserAnswer === question.userAnswer) {
+                    handleCloseDialogLocally();
+                    return;
+                }
+            }
+
+            const response = await confirmOverride(
+                "Do you want to override the values of the existing question?"
+            );
+            if (!response) {
+                return;
+            }
+
+            setShowAnswersLocally(false);
+            await saveQuestionToServer(question, newUserAnswer, newNotes);
+        }
+    };
+
     useEffect(() => {
         if (question) {
             if (showAnswers) {
@@ -76,6 +107,7 @@ const QuestionModal = ({
                 setNewNotes(question.notes);
                 setShowAnswersLocally(true);
             } else {
+                setNewNotes(question.notes);
                 setShowAnswersLocally(false);
             }
         } else {
@@ -243,18 +275,11 @@ const QuestionModal = ({
                     ></GlowButton>
                     <GlowButton
                         text="Save"
-                        handleOnClick={() => {
-                            setShowAnswersLocally(false);
-                            saveQuestionToServer(
-                                question,
-                                newUserAnswer,
-                                newNotes
-                            );
-                        }}
+                        handleOnClick={handleSaveClicked}
                     ></GlowButton>
                 </Modal.Footer>
             </Modal>
-            {/* <ConfirmOverrideDialog /> */}
+            <ConfirmOverrideDialog />
         </div>
     );
 };
