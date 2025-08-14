@@ -23,6 +23,9 @@ interface Props {
     isSaved: boolean;
     userAnswer: string;
     handleUserAnswerChanged: (newValue: string) => void;
+    analyzedAnswer: string;
+    handleAnalyzeAnswer: () => void;
+    isLoading: boolean;
 }
 
 const QuestionContainer = ({
@@ -35,6 +38,9 @@ const QuestionContainer = ({
     isSaved,
     userAnswer,
     handleUserAnswerChanged,
+    analyzedAnswer,
+    handleAnalyzeAnswer,
+    isLoading,
 }: Props) => {
     const [showAnswer, setShowAnswer] = useState(false);
 
@@ -135,7 +141,9 @@ const QuestionContainer = ({
                         >
                             <GlowButton
                                 text={"Analyze Answer"}
-                                handleOnClick={() => {}}
+                                handleOnClick={handleAnalyzeAnswer}
+                                loadingText="Analyzing Answer"
+                                loading={isLoading}
                             ></GlowButton>
 
                             <GlowButton
@@ -156,6 +164,28 @@ const QuestionContainer = ({
                         ></GlowButton>
                     </div>
                 </div>
+                {analyzedAnswer && (
+                    <>
+                        <div
+                            className={
+                                style.questionContainer__analyzedAnswerContainer
+                            }
+                        >
+                            <Header
+                                title="Answer Analysis"
+                                defaultBackground={false}
+                            ></Header>
+                            <div className={style.questionContainer__text}>
+                                <p>{analyzedAnswer}</p>
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                style.questionContainer__analyzeAnswerMargin
+                            }
+                        ></div>
+                    </>
+                )}
 
                 {showAnswer && (
                     <div className={style.questionContainer__answerContainer}>

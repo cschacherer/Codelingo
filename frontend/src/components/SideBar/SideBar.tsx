@@ -46,6 +46,9 @@ const SideBar = ({
                         CodeLingo
                     </a>
                 </h1>
+                <label className={style.sideBar__subTitle}>
+                    Use AI to test your coding skills
+                </label>
                 <a href="/">
                     <img className={style.sideBar__image} src={icon} />
                 </a>

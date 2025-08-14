@@ -4,9 +4,16 @@ import style from "./GlowButton.module.css";
 interface Props {
     text: string;
     handleOnClick: () => void;
+    loading?: boolean;
+    loadingText?: string;
 }
 
-const GlowButton = ({ text, handleOnClick }: Props) => {
+const GlowButton = ({
+    text,
+    handleOnClick,
+    loading = false,
+    loadingText = "",
+}: Props) => {
     return (
         <Button
             className={style.glowButton}
@@ -14,7 +21,13 @@ const GlowButton = ({ text, handleOnClick }: Props) => {
             size="lg"
             onClick={handleOnClick}
         >
-            {text}
+            {loading && (
+                <div
+                    className={`spinner-border spinner-border-sm ${style.glowButton__loadSpinner} `}
+                    role="status"
+                ></div>
+            )}
+            {loading ? loadingText : text}
         </Button>
     );
 };

@@ -29,6 +29,28 @@ export const generateQuestion = async (
     }
 };
 
+export const analyzeAnswer = async (
+    category: Category | string,
+    question: string,
+    answer: string,
+    userAnswer: string
+) => {
+    try {
+        const parameters = {
+            category: category,
+            question: question,
+            answer: answer,
+            userAnswer: userAnswer,
+        };
+        const response = await apiClient.post("/questions/analyze", parameters);
+        return response.data.analyzedAnswer;
+    } catch (error) {
+        let msg = getErrorMessage(error);
+        console.log(msg);
+        throw new Error(msg);
+    }
+};
+
 export const saveQuestion = async (question: SavedQuestion) => {
     try {
         const response = await apiClient.post<SavedQuestion>(

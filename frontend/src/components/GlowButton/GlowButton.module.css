@@ -55,6 +55,11 @@ stuff to do with glow button */
     color: black;
 }
 
+.glowButton__loadSpinner {
+    margin-right: 10px;
+    vertical-align: baseline;
+}
+
 @keyframes glowing {
     0% {
         background-position: 0 0;

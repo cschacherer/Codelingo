@@ -43,11 +43,22 @@
     background-color: white;
 }
 
+.questionContainer__answerButtonContainer {
+    display: flex;
+    gap: 20px;
+}
+
+.questionContainer__analyzedAnswerContainer {
+    border: 1px solid var(--darker-gray);
+    display: flex;
+    flex-direction: column;
+}
+
 .questionContainer__answerContainer {
     border: 1px solid var(--darker-gray);
 }
 
-.questionContainer__answerButtonContainer {
-    display: flex;
-    gap: 20px;
+.questionContainer__analyzeAnswerMargin {
+    height: 20px;
+    background-color: white;
 }

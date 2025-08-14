@@ -71,7 +71,7 @@ def createApp(testing=False):
     mail = Mail(app)
 
     # LLM management
-    useOpenAI = False
+    useOpenAI = True
     if useOpenAI:
         communicator = openAI_LLM()
     else:
@@ -341,6 +341,35 @@ def createApp(testing=False):
                     type=type,
                     question=question,
                     answer=answer,
+                ),
+                200,
+            )
+        except Exception as e:
+            return jsonify(message=e)
+
+    @app.route("/questions/analyze", methods=["POST"])
+    def analyzeUserAnswer():
+        try:
+            data = request.get_json()
+            category = data.get("category")
+            question = data.get("question")
+            officialAnswer = data.get("answer")
+            userAnswer = data.get("userAnswer")
+            if not category or not question or not officialAnswer or not userAnswer:
+                return (
+                    jsonify(
+                        message="The category, question, official answer, or userAnswer for the question cannot be missing"
+                    ),
+                    400,
+                )
+            analyzedAnswer = communicator.analyzeAnswer(
+                category, question, officialAnswer, userAnswer
+            )
+            # parsedJsonData = json.loads(questionData)
+
+            return (
+                jsonify(
+                    analyzedAnswer=analyzedAnswer,
                 ),
                 200,
             )

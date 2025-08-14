@@ -4,16 +4,18 @@ import SideBar from "../../components/SideBar/SideBar";
 import { Defaults } from "../../utils/questionDefaults";
 import { getErrorMessage } from "../../utils/utils";
 import { useAuth } from "../../context/authContext";
-import { generateQuestion, saveQuestion } from "../../services/questionService";
+import {
+    generateQuestion,
+    saveQuestion,
+    analyzeAnswer,
+} from "../../services/questionService";
 import NavigationBar from "../../components/Navigation/NavigationBar";
 import { QuestionOptions } from "../../models/QuestionOptions";
 import { Category } from "../../models/Category";
 import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
 import style from "./HomePage.module.css";
-import { useNavigate, useNavigation } from "react-router-dom";
-import { Button, Modal } from "react-bootstrap";
-import useConfirm from "../../components/ConfirmDialog/ConfirmDialog";
+import { useNavigate } from "react-router-dom";
 import QuestionModal from "../../components/QuestionModal/QuestionModal";
 import { SavedQuestion } from "../../models/SavedQuestion";
 
@@ -27,6 +29,8 @@ const HomePage = () => {
     const [answer, setAnswer] = useState("");
 
     const [userAnswer, setUserAnswer] = useState("");
+
+    const [analyzedAnswer, setAnalyzedAnswer] = useState("");
 
     //these variables are updated when the dropdown selection changes
     //These are the default question values when the home page is first loaded
@@ -45,7 +49,8 @@ const HomePage = () => {
     );
     const [questionType, setQuestionType] = useState(Type.Coding);
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [questionIsLoading, setQuestionIsLoading] = useState(false);
+    const [analyzeAnswerLoading, setAnalyzeAnswerLoading] = useState(false);
 
     //variables to handle saving the question
     const [questionIsSaved, setQuestionIsSaved] = useState(false);
@@ -74,7 +79,7 @@ const HomePage = () => {
                 return;
             }
 
-            setIsLoading(true);
+            setQuestionIsLoading(true);
 
             const categoryToSend =
                 category !== Category.Custom ? category : customCategory;
@@ -88,6 +93,7 @@ const HomePage = () => {
             setQuestion(data.question);
             setAnswer(data.answer);
             setUserAnswer("");
+            setAnalyzedAnswer("");
             setQuestionCategory(category);
             setQuestionDifficulty(difficulty);
             setQuestionType(type);
@@ -96,9 +102,28 @@ const HomePage = () => {
             setQuestion(msg);
             setAnswer("");
         } finally {
-            setIsLoading(false);
+            setQuestionIsLoading(false);
             setQuestionIsSaved(false);
             setSelectedSavedQuestion(null);
+        }
+    };
+
+    const analyzeUserAnswer = async () => {
+        try {
+            setAnalyzeAnswerLoading(true);
+            const response = await analyzeAnswer(
+                selectedCategory,
+                question,
+                answer,
+                userAnswer
+            );
+            setAnalyzedAnswer(response);
+        } catch (err) {
+            let msg = getErrorMessage(err);
+            console.log(msg);
+            setAnalyzedAnswer(msg);
+        } finally {
+            setAnalyzeAnswerLoading(false);
         }
     };
 
@@ -206,7 +231,7 @@ const HomePage = () => {
                         handleDifficultyChange={updateDifficultyChanged}
                         handleTypeChange={updateTypeChanged}
                         handleOnClick={generateQuestionFunction}
-                        loading={isLoading}
+                        loading={questionIsLoading}
                     ></SideBar>
                 </div>
                 <div className={style.homePage__questionColumn}>
@@ -224,6 +249,9 @@ const HomePage = () => {
                         isSaved={questionIsSaved}
                         userAnswer={userAnswer}
                         handleUserAnswerChanged={updateUserAnswerChanged}
+                        analyzedAnswer={analyzedAnswer}
+                        handleAnalyzeAnswer={analyzeUserAnswer}
+                        isLoading={analyzeAnswerLoading}
                     ></QuestionContainer>
                 </div>
                 {/* need to wait for selectedSavedQuestion to be a valid value, otherwise it causes issues when 
