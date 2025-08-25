@@ -37,16 +37,18 @@ def createApp(testing=False):
     # region Configuration
     app.config.from_object(Config)
 
-    # testing
-    if testing:
-        app.config["TESTING"] = True
-        app.config["SQLALCHEMY_DATABASE_URI"] = app.config[
-            "TESTING_SQLALCHEMY_DATABASE_URI"
-        ]
-
     load_dotenv()
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
     app.config["WEBSITE_BASE_URL"] = "http://localhost:5173"
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+
+    # testing
+    if testing:
+        app.config["TESTING"] = True
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+            "TESTING_SQLALCHEMY_DATABASE_URI"
+        )
 
     # database management
     DatabaseConfig(app)
