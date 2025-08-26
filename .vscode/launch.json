@@ -31,7 +31,7 @@
             "name": "Debug backend",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/app.py",
+            "program": "${workspaceFolder}/backend/application.py",
             "cwd": "${workspaceFolder}/backend"
         },
         {
