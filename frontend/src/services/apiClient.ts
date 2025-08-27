@@ -3,7 +3,8 @@ import { getErrorMessage } from "../utils/utils";
 import { tokenStorage } from "../utils/tokenStorage";
 
 const apiClient = axios.create({
-    baseURL: "http://127.0.0.1:5000",
+    //baseURL: "http://127.0.0.1:5000",
+    baseURL: "http://codelingo.us-east-2.elasticbeanstalk.com",
     withCredentials: true,
 });
 

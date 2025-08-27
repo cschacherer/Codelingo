@@ -2,11 +2,7 @@
 # An object of Flask class is our WSGI application.
 import os
 import json
-from flask import (
-    Flask,
-    jsonify,
-    request,
-)
+from flask import Flask, jsonify, request, url_for
 from LLMs.groq_LLM import Groq_LLM
 from LLMs.openAI_LLM import openAI_LLM
 from flask_cors import CORS
@@ -245,9 +241,7 @@ def createApp(testing=False):
         try:
             token = getResetToken(recipientEmail)
 
-            resetLink = (
-                f"{application.config["WEBSITE_BASE_URL"]}/password/reset/{token}"
-            )
+            resetLink = url_for("/password/reset/{token}", _external=True)
 
             msg = Message(
                 "CodeLingo Reset Password",

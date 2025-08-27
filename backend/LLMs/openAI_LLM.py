@@ -41,10 +41,11 @@ class openAI_LLM:
             return stringData
 
         except Exception as e:
-            return {
+            jsonException = {
                 "question": "Error generating question using OpenAI. " + repr(e),
                 "answer": "",
             }
+            return json.dumps(jsonException)
 
     def analyzeAnswer(self, category, question, officialAnswer, userAnswer):
         try:

@@ -222,7 +222,6 @@ const HomePage = () => {
             selectedDifficulty,
             selectedType
         );
-        auth.loginUser("admin", "admin123");
     }, []);
 
     return (
