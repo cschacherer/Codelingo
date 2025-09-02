@@ -28,7 +28,20 @@ from flask_mail import Mail, Message
 def createApp(testing=False):
 
     application = Flask(__name__)
-    CORS(application, supports_credentials=True)
+    CORS(
+        application,
+        supports_credentials=True,
+        resources={
+            r"/*": {
+                "origins": [
+                    "http://localhost:3000",  # local dev
+                    "http://codelingo-ai.com",  # your deployed frontend
+                    "https://codelingo-ai.com",
+                    "http://codelingo.us-east-2.elasticbeanstalk.com",  # elastic beanstalk frontend
+                ]
+            }
+        },
+    )
 
     # region Configuration
     application.config.from_object(Config)
@@ -438,6 +451,11 @@ def createApp(testing=False):
         return jsonify(message="Question has been deleted"), 200
 
     # endregion
+
+    # Health check path for EB load balancer
+    @application.route("/health")
+    def health_check():
+        return "OK", 200
 
     return application
 

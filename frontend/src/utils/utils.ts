@@ -18,13 +18,13 @@ export const getErrorMessage = (e: unknown): string => {
     }
 };
 
-export const validateUsername = (username: string): boolean => {
-    return true;
-};
+// export const validateUsername = (username: string): boolean => {
+//     return true;
+// };
 
-export const validatePassword = (password: string): boolean => {
-    return true;
-};
+// export const validatePassword = (password: string): boolean => {
+//     return true;
+// };
 
 export const validateEmailAddress = (email: string): boolean => {
     const regex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");

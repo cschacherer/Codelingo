@@ -48,7 +48,7 @@ const SavedQuestionsPage = () => {
             question.userAnswer = newUserAnswer;
             question.notes = newNotes;
             question.analyzedAnswer = newAnalyzedAnswer;
-            const response = await saveQuestion(question);
+            await saveQuestion(question);
             await getUserData();
         } catch (e) {
             console.log((e as Error).message);
@@ -80,7 +80,7 @@ const SavedQuestionsPage = () => {
                 "Are you sure you want to permanently delete this question?"
             );
             if (!confirm) return;
-            const response = await deleteQuestion(questionId);
+            await deleteQuestion(questionId);
             await getUserData();
         } catch (e) {
             console.log((e as Error).message);

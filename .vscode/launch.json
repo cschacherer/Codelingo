@@ -19,10 +19,10 @@
             "type": "firefox",
             "request": "launch",
             "name": "Launch frontend",
-            "url": "http://localhost:5173",
+            "url": "http://localhost:3000",
             "pathMappings": [
                 {
-                    "url": "http://localhost:5173/src",
+                    "url": "http://localhost:3000/src",
                     "path": "${workspaceFolder}/frontend/src"
                 }
             ]
@@ -33,32 +33,6 @@
             "request": "launch",
             "program": "${workspaceFolder}/backend/application.py",
             "cwd": "${workspaceFolder}/backend"
-        },
-        {
-            "type": "firefox",
-            "request": "launch",
-            "name": "Launch frontend in firefox",
-            "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/frontend/src",
-            "pathMappings": [
-                {
-                    "url": "http://localhost:5173/src",
-                    "path": "${workspaceFolder}/frontend/src"
-                }
-            ],
-        },
-        {
-            "type": "firefox",
-            "request": "launch",
-            "name": "Launch frontend in chrome",
-            "url": "http://localhost:5173",
-            "webRoot": "${workspaceFolder}/frontend/src",
-            "pathMappings": [
-                {
-                    "url": "http://localhost:5173/src",
-                    "path": "${workspaceFolder}/frontend/src"
-                }
-            ],
         }
     ]
 }

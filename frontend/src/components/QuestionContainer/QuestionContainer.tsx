@@ -1,11 +1,9 @@
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import style from "./QuestionContainer.module.css";
 import { useState, useEffect } from "react";
 import CodeEditor from "../CodeEditor/CodeEditor";
 import ReactMarkdown from "react-markdown";
 import { Category } from "../../models/Category";
-import { Difficulty } from "../../models/Difficulty";
 import { Type } from "../../models/Type";
 import Header from "../Header/Header";
 import GlowButton from "../GlowButton/GlowButton";
@@ -14,7 +12,6 @@ interface Props {
     question: string;
     answer: string;
     questionCategory: Category;
-    questionDifficulty: Difficulty;
     questionType: Type;
     handleSaveQuestion: (
         formattedQuestion: string,
@@ -32,7 +29,6 @@ const QuestionContainer = ({
     question,
     answer,
     questionCategory,
-    questionDifficulty,
     questionType,
     handleSaveQuestion,
     isSaved,

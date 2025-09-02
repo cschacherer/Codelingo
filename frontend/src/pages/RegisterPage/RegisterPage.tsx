@@ -7,9 +7,9 @@ import style from "./RegisterPage.module.css";
 import PasswordInput from "../../components/PasswordInput/PasswordInput";
 
 const RegisterPage = () => {
-    const [username, setUsername] = useState("admin");
-    const [password, setPassword] = useState("admin123");
-    const [email, setEmail] = useState("something@gmail.com");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
     const [error, setError] = useState("");
 
     const auth = useAuth();

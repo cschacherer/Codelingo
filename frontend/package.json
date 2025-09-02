@@ -44,8 +44,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "start": "react-scripts start"
+    "preview": "vite preview"
   },
   "proxy": "http?//localhost:3000"
 }

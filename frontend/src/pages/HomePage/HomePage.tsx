@@ -44,9 +44,6 @@ const HomePage = () => {
     //These variables are only updated when a question is generated - it will mess with the
     //question component Coding Editor if it changes to a different category when the dropdown changes
     const [questionCategory, setQuestionCategory] = useState(selectedCategory);
-    const [questionDifficulty, setQuestionDifficulty] = useState(
-        Difficulty.Easy
-    );
     const [questionType, setQuestionType] = useState(Type.Coding);
 
     const [questionIsLoading, setQuestionIsLoading] = useState(false);
@@ -74,12 +71,12 @@ const HomePage = () => {
                 setSelectedType(Defaults.type);
 
                 setQuestionCategory(Defaults.category);
-                setQuestionDifficulty(Defaults.difficulty);
                 setQuestionType(Defaults.type);
                 return;
             }
 
             setQuestionIsLoading(true);
+            setQuestion("Generating...");
 
             const categoryToSend =
                 category !== Category.Custom ? category : customCategory;
@@ -95,7 +92,6 @@ const HomePage = () => {
             setUserAnswer("");
             setAnalyzedAnswer("");
             setQuestionCategory(category);
-            setQuestionDifficulty(difficulty);
             setQuestionType(type);
         } catch (err) {
             let msg = getErrorMessage(err);
@@ -175,7 +171,7 @@ const HomePage = () => {
             passedQuestion.userAnswer = newUserAnswer;
             passedQuestion.notes = newNotes;
             passedQuestion.analyzedAnswer = newAnalyzedAnswer;
-            const data = await saveQuestion(passedQuestion);
+            await saveQuestion(passedQuestion);
             if (userAnswer !== newUserAnswer) setUserAnswer(newUserAnswer); //in case the answer was modified in the Save Question Modal Dialog, update it on home page
             setQuestionIsSaved(true);
         } catch (err) {
@@ -251,7 +247,6 @@ const HomePage = () => {
                         question={question}
                         answer={answer}
                         questionCategory={questionCategory}
-                        questionDifficulty={questionDifficulty}
                         questionType={questionType}
                         handleSaveQuestion={showSaveQuestionDialogFunction}
                         isSaved={questionIsSaved}

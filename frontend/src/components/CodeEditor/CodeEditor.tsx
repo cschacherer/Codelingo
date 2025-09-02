@@ -1,5 +1,5 @@
 import { basicSetup } from "codemirror";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import { EditorState, Compartment } from "@codemirror/state";
 import {
     EditorView,

@@ -1,4 +1,4 @@
-import { Button, Modal } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import style from "./QuestionModal.module.css";
 import { useEffect, useState } from "react";
 import { SavedQuestion } from "../../models/SavedQuestion";
