@@ -167,7 +167,9 @@ const QuestionModal = ({
                     closeButton
                 >
                     <div className={style.questionModal__headerText}>
-                        Saved Question
+                        {!showAnswersLocally
+                            ? "Retry Saved Question"
+                            : "Saved Question"}
                     </div>
                 </Modal.Header>
                 <Modal.Body>

@@ -15,6 +15,7 @@
     justify-content: center;
     align-items: center;
     border: 1px solid var(--darker-gray);
+    padding: 20px;
 }
 
 .about__owlIcon {
@@ -23,6 +24,46 @@
 }
 
 .about__text {
-    padding: 20px;
-        font-size: 1.2rem;
+    font-size: 1.2rem;
+    margin: 0px;
+}
+
+.about__featuresLabel {
+    padding: 20px 0px 0px 20px;
+    font-size: 1.5rem;
+    margin: 0px;
+    font-weight: 700;
+}
+
+.about__featuresText {
+    padding: 10px 20px; 
+    font-size: 1.2rem;
+    margin: 0px;
+}
+
+.about__featuresContainer {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--darker-gray);
+    margin-bottom: 20px;
+}
+
+.about__picture {
+    height: 500px;
+    object-fit: contain;
+    border: 1px black solid;
+}
+
+.about__longPicture {
+    width: 80%;
+    object-fit: contain;
+    border: 1px black solid;
+}
+
+.about__imgContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 50px;
+    margin: 20px;
 }
