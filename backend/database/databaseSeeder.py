@@ -21,6 +21,11 @@ class DatabaseSeeder:
                     email="guestEmail@gmail.com",
                 ),
                 User(
+                    username="testUser",
+                    plainTextPassword="testUserPassword",
+                    email="testUser@gmail.com",
+                ),
+                User(
                     username="alice",
                     plainTextPassword="alicePass",
                     email="alice@gmail.com",

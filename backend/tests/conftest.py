@@ -1,9 +1,10 @@
-import pytest  
-from app import createApp
+import pytest
+from application import createApp
+
 
 @pytest.fixture(scope="module")
-def testClient(): 
+def testClient():
     flask_app = createApp(testing=True)
 
-    with flask_app.test_client() as testingClient: 
+    with flask_app.test_client() as testingClient:
         yield testingClient

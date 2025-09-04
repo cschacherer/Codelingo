@@ -14,7 +14,6 @@ from flask_jwt_extended import (
     get_jwt_identity,
     create_refresh_token,
 )
-from config import Config
 from database.dbConfig import DatabaseConfig, db
 from database.models import User
 from database.models import SavedQuestion
@@ -43,12 +42,9 @@ def createApp(testing=False):
         },
     )
 
-    # region Configuration
-    application.config.from_object(Config)
-
+    # region Environment Variables Configuration
     load_dotenv()
     application.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-    # application.config["WEBSITE_BASE_URL"] = "http://localhost:5173"
 
     application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
 
@@ -131,12 +127,17 @@ def createApp(testing=False):
         email = data.get("email")
         if not username or not password:
             return jsonify(message="Username or password cannot be missing"), 400
+
         existingUsername = User.query.filter_by(username=username).first()
         if existingUsername:
             return jsonify(message="User with that username already exists"), 400
-        existingEmail = User.query.filter_by(email=email).first()
-        if existingEmail:
-            return jsonify(message="User with that email already exists"), 400
+
+        if not email:
+            email = ""
+        if email != "":
+            existingEmail = User.query.filter_by(email=email).first()
+            if existingEmail:
+                return jsonify(message="User with that email already exists"), 400
         user = User(username=username, plainTextPassword=password, email=email)
         db.session.add(user)
         db.session.commit()
@@ -157,19 +158,22 @@ def createApp(testing=False):
     def refreshAccessToken():
         currentUserId = get_jwt_identity()
         newAccessToken = create_access_token(str(currentUserId))
-        return jsonify(accessToken=newAccessToken)
+        if newAccessToken:
+            return jsonify(accessToken=newAccessToken)
+        return jsonify(message="Invalid user or token"), 400
 
     # endregion
 
     # region User Functions
 
-    @application.route("/users", methods=["GET"])
-    @jwt_required()
-    def getAllUsers():
-        users = User.query.all()
-        if not users:
-            return jsonify(message="No users found"), 404
-        return jsonify(users=[user.to_dict() for user in users]), 200
+    # need to add admin functionality before allowing /users
+    # @application.route("/users", methods=["GET"])
+    # @jwt_required()
+    # def getAllUsers():
+    #     users = User.query.all()
+    #     if not users:
+    #         return jsonify(message="No users found"), 404
+    #     return jsonify(users=[user.to_dict() for user in users]), 200
 
     @application.route("/user", methods=["GET"])
     @jwt_required()
@@ -224,7 +228,7 @@ def createApp(testing=False):
         db.session.delete(user)
         db.session.commit()
         newUsers = User.query.all()
-        return jsonify(users=[user.to_dict() for user in newUsers]), 200
+        return jsonify(message="User deleted"), 200
 
     # endregion
 
@@ -254,7 +258,7 @@ def createApp(testing=False):
         try:
             token = getResetToken(recipientEmail)
 
-            resetLink = url_for("/password/reset/{token}", _external=True)
+            resetLink = url_for("resetPassword", token=token, _external=True)
 
             msg = Message(
                 "CodeLingo Reset Password",
