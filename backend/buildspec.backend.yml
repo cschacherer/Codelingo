@@ -29,7 +29,8 @@ phases:
 
 artifacts:
     files:
-        - backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
+        - backend/dist/backend.zip # only this file will be uploaded
+    discard-paths: yes # only send backend.zip as artifact, not the parent folders
 
 reports:
     tests: # First report group: test results
