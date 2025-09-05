@@ -16,16 +16,12 @@ phases:
         commands:
             - . .venv/bin/activate
             #run pytest tests
-            - |
-                pytest --maxfail=1 \                          # Stop after first test failure
-                  --junitxml=test-reports/junit.xml \         # Save test results in JUnit XML
-                  --cov=. \                                   # Collect coverage for all project files
-                  --cov-report=xml:test-reports/coverage.xml  # Save coverage report in Cobertura XML
-
+            # Stop after first test failure, stop after first test failure, collect coverage for all project files, Save coverage report in Cobertura XML
+            - pytest --maxfail=1 --junitxml=test-reports/junit.xml --cov=. --cov-report=xml:test-reports/coverage.xml
             #zip up backend into a dist folder, for elastic beanstalk deployment :
             - mkdir -p dist && zip -r dist/backend.zip . \
-              -x ".venv/*" "__pycache__/*" ".pytest_cache/*"
-              # Exclude venv, Python caches, pytest cache from the zip
+              -x ".venv/*" "__pycache__/*" ".pytest_cache/*" ".env"
+              # Exclude venv, Python caches, pytest cache, and .env file from the zip
 
 artifacts:
     files:
