@@ -81,12 +81,8 @@ def createApp(testing=False):
     )
     mail = Mail(application)
 
-    # LLM management
-    useOpenAI = True
-    if useOpenAI:
-        communicator = openAI_LLM()
-    else:
-        communicator = Groq_LLM()
+    # LLM management - default to using openai
+    communicator = openAI_LLM()
 
     # endregion
 
