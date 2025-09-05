@@ -54,6 +54,11 @@ def createApp(testing=False):
         application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
             "TESTING_SQLALCHEMY_DATABASE_URI"
         )
+        testingDatabaseFilePath = application.config["SQLALCHEMY_DATABASE_URI"].replace(
+            "sqlite:///", ""
+        )
+        if os.path.exists(testingDatabaseFilePath):
+            os.remove(testingDatabaseFilePath)
 
     # database management
     DatabaseConfig(application)

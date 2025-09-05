@@ -23,7 +23,7 @@ class DatabaseSeeder:
                 User(
                     username="testUser",
                     plainTextPassword="testUserPassword",
-                    email="testUser@gmail.com",
+                    email="codelingo.help@gmail.com",
                 ),
                 User(
                     username="alice",
