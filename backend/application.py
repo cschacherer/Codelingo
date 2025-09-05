@@ -62,9 +62,6 @@ def createApp(testing=False):
 
     # database management
     DatabaseConfig(application)
-    with application.app_context():
-        db.create_all()
-        DatabaseSeeder.seed()
 
     # token management
     application.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
