@@ -1,3 +1,4 @@
+# Buildspec file for AWS CodeBuild
 version: 0.2
 
 phases:
@@ -5,14 +6,41 @@ phases:
         runtime-versions:
             python: 3.11
         commands:
+            - pip3 install --upgrade pip
+            - python3 -m venv .venv
+            - . .venv/bin/activate
             - pip install -r requirements.txt
+            - pip install pytest pytest-cov
+
     build:
         commands:
-            - echo "Running tests..."
-            - pytest
-    post_build:
-        commands:
-            - echo "Build finished"
+            - . .venv/bin/activate
+            #run pytest tests
+            - |
+                pytest --maxfail=1 \                          # Stop after first test failure
+                  --junitxml=test-reports/junit.xml \         # Save test results in JUnit XML
+                  --cov=. \                                   # Collect coverage for all project files
+                  --cov-report=xml:test-reports/coverage.xml  # Save coverage report in Cobertura XML
+
+            #zip up backend into a dist folder, for elastic beanstalk deployment :
+            - mkdir -p dist && zip -r dist/backend.zip . \
+              -x ".venv/*" "__pycache__/*" ".pytest_cache/*"
+              # Exclude venv, Python caches, pytest cache from the zip
+
 artifacts:
     files:
-        - "**/*"
+        - dist/backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
+
+reports:
+    tests: # First report group: test results
+        files:
+            - test-reports/junit.xml
+        file-format: JUNITXML # Format so CodeBuild can parse test outcomes
+    coverage: # Second report group: code coverage
+        files:
+            - test-reports/coverage.xml
+        file-format: COBERTURAXML # Format so CodeBuild can parse coverage data
+
+cache:
+    paths:
+        - "/root/.cache/pip/**/*" # Cache pip’s downloaded wheels/packages between builds for speed

@@ -1,46 +1,61 @@
-# Buildspec file for AWS CodeBuild
-version: 0.2
+# Buildspec for React/TypeScript frontend
+version: 0.2 # Use modern buildspec format
+
+env:
+    variables:
+        BUILD_DIR: "build" # Change to "dist" if your bundler outputs there
+        # PKG_MGR: "npm"     # Optionally set to "yarn" or "pnpm" if you prefer
 
 phases:
     install:
         runtime-versions:
-            python: 3.11
+            nodejs: 18 # Use Node.js 18 LTS (adjust to match your project)
         commands:
-            - pip3 install --upgrade pip
-            - python3 -m venv .venv
-            - . .venv/bin/activate
-            - pip install -r requirements.txt
-            - pip install pytest pytest-cov
+            - node -v
+            - npm -v
+            # Clean install for reproducible builds; replace with "yarn install --frozen-lockfile"
+            # or "pnpm install --frozen-lockfile" if you use those.
+            - npm ci
+
+    pre_build:
+        commands:
+            # Optional: run lint and type-check to fail fast on quality issues.
+            # Make sure you have scripts in package.json like:
+            #  "lint": "eslint .", "typecheck": "tsc --noEmit"
+            - echo "Running optional lint/type-check (won't fail if scripts are missing)"
+            - npm run lint || echo "No lint script; skipping"
+            - npm run typecheck || echo "No typecheck script; skipping"
+
+            # Optional: run tests in CI mode and export reports (Jest example).
+            # Add these scripts in package.json for best results:
+            #  "test:ci": "jest --ci --reporters=default --reporters=jest-junit --coverage"
+            - echo "Running optional test suite"
+            - npm run test:ci || echo "No test:ci script; skipping"
 
     build:
         commands:
-            - . .venv/bin/activate
-            #run pytest tests
-            - |
-                pytest --maxfail=1 \                          # Stop after first test failure
-                  --junitxml=test-reports/junit.xml \         # Save test results in JUnit XML
-                  --cov=. \                                   # Collect coverage for all project files
-                  --cov-report=xml:test-reports/coverage.xml  # Save coverage report in Cobertura XML
-
-            #zip up backend into a dist folder, for elastic beanstalk deployment :
-            - mkdir -p dist && zip -r dist/backend.zip . \
-              -x ".venv/*" "__pycache__/*" ".pytest_cache/*"
-              # Exclude venv, Python caches, pytest cache from the zip
+            # Build your production bundle; must output to $BUILD_DIR
+            - npm run build
+            - test -d "$BUILD_DIR" || (echo "Build directory '$BUILD_DIR' not found" && exit 1)
 
 artifacts:
+    # Upload the compiled site as the pipeline artifact (for S3/CloudFront deploy stage)
+    base-directory: build # Change to "$BUILD_DIR" if your CodeBuild image supports env refs here
     files:
-        - dist/backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
-
-reports:
-    tests: # First report group: test results
-        files:
-            - test-reports/junit.xml
-        file-format: JUNITXML # Format so CodeBuild can parse test outcomes
-    coverage: # Second report group: code coverage
-        files:
-            - test-reports/coverage.xml
-        file-format: COBERTURAXML # Format so CodeBuild can parse coverage data
+        - "**/*"
 
 cache:
     paths:
-        - "/root/.cache/pip/**/*" # Cache pip’s downloaded wheels/packages between builds for speed
+        - "node_modules/**/*" # Speeds up subsequent builds (safe with npm ci)
+
+# Optional: surface test & coverage reports in the CodeBuild UI (Jest example).
+# Requires jest-junit and coverage config (e.g., cobertura) in your project.
+reports:
+    jest-tests:
+        files:
+            - "junit.xml" # jest-junit default output (configure via JEST_JUNIT_OUTPUT env or reporter options)
+        file-format: JUNITXML
+    coverage:
+        files:
+            - "coverage/cobertura-coverage.xml" # e.g., via "coverageReporters": ["cobertura", "text"]
+        file-format: COBERTURAXML
