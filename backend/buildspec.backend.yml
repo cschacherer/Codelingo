@@ -9,12 +9,14 @@ phases:
             - pip3 install --upgrade pip
             - python3 -m venv .venv
             - . .venv/bin/activate
-            - pip install -r backend/requirements.txt
+            - cd backend
+            - pip install -r requirements.txt
             - pip install pytest pytest-cov
 
     build:
         commands:
             - . .venv/bin/activate
+            - cd backend
             #run pytest tests
             # Stop after first test failure, stop after first test failure, collect coverage for all project files, Save coverage report in Cobertura XML
             - pytest --maxfail=1 --junitxml=test-reports/junit.xml --cov=. --cov-report=xml:test-reports/coverage.xml
