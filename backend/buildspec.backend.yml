@@ -6,16 +6,18 @@ phases:
         runtime-versions:
             python: 3.11
         commands:
-            - cd backend
             - pip3 install --upgrade pip
             - python3 -m venv .venv
             - .venv/bin/activate
+            - cd backend
             - pip install -r requirements.txt
             - pip install pytest pytest-cov
+            - cd ..
 
     build:
         commands:
             - .venv/bin/activate
+            - cd backend
             #run pytest tests
             # Stop after first test failure, stop after first test failure, collect coverage for all project files, Save coverage report in Cobertura XML
             - pytest --maxfail=1 --junitxml=test-reports/junit.xml --cov=. --cov-report=xml:test-reports/coverage.xml
@@ -23,19 +25,20 @@ phases:
             - mkdir -p dist && zip -r dist/backend.zip . \
               -x ".venv/*" "__pycache__/*" ".pytest_cache/*" ".env"
               # Exclude venv, Python caches, pytest cache, and .env file from the zip
+            - cd ..
 
 artifacts:
     files:
-        - dist/backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
+        - backend/dist/backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
 
 reports:
     tests: # First report group: test results
         files:
-            - test-reports/junit.xml
+            - backend/test-reports/junit.xml
         file-format: JUNITXML # Format so CodeBuild can parse test outcomes
     coverage: # Second report group: code coverage
         files:
-            - test-reports/coverage.xml
+            - backend/test-reports/coverage.xml
         file-format: COBERTURAXML # Format so CodeBuild can parse coverage data
 
 cache:
