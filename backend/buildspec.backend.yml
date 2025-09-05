@@ -29,7 +29,7 @@ phases:
 
 artifacts:
     files:
-        - backend/dist/backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
+        - backend.zip # Upload dist/backend.zip as the build artifact (for deploy stage)
 
 reports:
     tests: # First report group: test results
