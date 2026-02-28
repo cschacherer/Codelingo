@@ -33,6 +33,21 @@
             "request": "launch",
             "program": "${workspaceFolder}/backend/application.py",
             "cwd": "${workspaceFolder}/backend"
+        },
+        {
+            "name": "Containers: Backend Python Flask Server",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "localRoot": "${workspaceFolder}/backend",
+                        "remoteRoot": "/app"
+                    }
+                ],
+                "projectType": "flask"
+            }
         }
     ]
 }

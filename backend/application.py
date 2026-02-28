@@ -22,6 +22,7 @@ from dotenv import load_dotenv
 from datetime import timedelta
 from itsdangerous.url_safe import URLSafeTimedSerializer
 from flask_mail import Mail, Message
+from google.cloud.sql.connector import Connector
 
 
 def createApp(testing=False):
@@ -46,19 +47,43 @@ def createApp(testing=False):
     load_dotenv()
     application.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
-    application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("SQLALCHEMY_DATABASE_URI")
+    # doing local dev development
+    if os.getenv("ENV") == "dev":
+        # use local testing database
+        if testing:
+            application.config["TESTING"] = True
+            application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+                "TESTING_SQLALCHEMY_DATABASE_URI"
+            )
+            testingDatabaseFilePath = application.config[
+                "SQLALCHEMY_DATABASE_URI"
+            ].replace("sqlite:///", "")
+            if os.path.exists(testingDatabaseFilePath):
+                os.remove(testingDatabaseFilePath)
 
-    # testing
-    if testing:
-        application.config["TESTING"] = True
-        application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-            "TESTING_SQLALCHEMY_DATABASE_URI"
-        )
-        testingDatabaseFilePath = application.config["SQLALCHEMY_DATABASE_URI"].replace(
-            "sqlite:///", ""
-        )
-        if os.path.exists(testingDatabaseFilePath):
-            os.remove(testingDatabaseFilePath)
+        # connect to database on Google Cloud SQL using a public ip address
+        else:
+            # Local development (normal connection)
+            application.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
+                "SQLALCHEMY_DATABASE_URI"
+            )
+
+    # running is "production" docker environment, you need the google.cloud.sql.connector
+    else:
+        connector = Connector()
+
+        def getconn():
+            conn = connector.connect(
+                os.getenv("INSTANCE_CONNECTION_NAME"),  # project:region:instance
+                "pg8000",
+                user=os.getenv("DB_USER"),
+                password=os.getenv("DB_PASS"),
+                db=os.getenv("DB_NAME"),
+            )
+            return conn
+
+        application.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+pg8000://"
+        application.config["SQLALCHEMY_ENGINE_OPTIONS"] = {"creator": getconn}
 
     # database management
     DatabaseConfig(application)
@@ -462,9 +487,16 @@ def createApp(testing=False):
     return application
 
 
+# create application for gunicorn to run it on production server
+application = createApp()
+
+# # only run this when you have a brand new database and need to fill it with default data
+# with application.app_context():
+#     db.create_all()
+#     DatabaseSeeder.seed()  # filling database with test data
+
 # main driver function
 if __name__ == "__main__":
     # run() method of Flask class runs the application
     # on the local development server.
-    application = createApp()
-    application.run(debug=True)
+    application.run(host="0.0.0.0", port=8080, debug=True)
