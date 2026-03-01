@@ -5,7 +5,8 @@ import { tokenStorage } from "../utils/tokenStorage";
 const apiClient = axios.create({
     //baseURL: "http://127.0.0.1:5000",
     // baseURL: "http://codelingo.us-east-2.elasticbeanstalk.com",
-    baseURL: "https://api.codelingo-ai.com",
+    // baseURL: "https://api.codelingo-ai.com",
+    baseURL: "https://codelingo-backend-786765567433.us-west3.run.app",
 
     withCredentials: true,
 });
@@ -23,7 +24,7 @@ apiClient.interceptors.request.use(
         let msg = getErrorMessage(error);
         console.log(`Request config error. ${msg}`);
         return Promise.reject(error);
-    }
+    },
 );
 
 //interceptor to check if the access token has been revoked and if it needs to be refreshed
@@ -51,16 +52,15 @@ apiClient.interceptors.response.use(
                 const newAccessToken = refreshResponse.data.access_token;
                 tokenStorage.setTokens(newAccessToken, refreshToken);
 
-                apiClient.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${newAccessToken}`;
+                apiClient.defaults.headers.common["Authorization"] =
+                    `Bearer ${newAccessToken}`;
 
                 //retry sending original request with the updated access token
                 return apiClient(originalRequest);
             } catch (refreshError) {
                 //refresh token is expired and the user needs to log in again
                 console.log(
-                    `Token refresh failed. ${getErrorMessage(refreshError)}`
+                    `Token refresh failed. ${getErrorMessage(refreshError)}`,
                 );
                 tokenStorage.clearTokens();
                 return Promise.reject(error);
@@ -68,7 +68,7 @@ apiClient.interceptors.response.use(
         }
         console.log(`Request config error. ${getErrorMessage(error)}`);
         return Promise.reject(error);
-    }
+    },
 );
 
 export default apiClient;
