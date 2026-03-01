@@ -201,7 +201,7 @@ def createApp(testing=False):
     @application.route("/user", methods=["GET"])
     @jwt_required()
     def getUser():
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         user = User.query.filter_by(id=currentUserId).first()
         if not user:
             return jsonify(message="User not found"), 404
@@ -220,7 +220,7 @@ def createApp(testing=False):
     @application.route("/user", methods=["PATCH"])
     @jwt_required()
     def updateUser():
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         user = User.query.filter_by(id=currentUserId).first()
         if not user:
             return jsonify(message="User not found"), 404
@@ -242,7 +242,7 @@ def createApp(testing=False):
     @application.route("/user", methods=["DELETE"])
     @jwt_required()
     def deleteUser():
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
 
         user = User.query.filter_by(id=currentUserId).first()
         if not user:
@@ -340,7 +340,7 @@ def createApp(testing=False):
     @application.route("/questions", methods=["GET"])
     @jwt_required()
     def getAllQuestions():
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         questions = SavedQuestion.query.filter_by(userId=currentUserId).all()
         if not questions:
             return jsonify(message=f"Questions for user were not found"), 404
@@ -418,7 +418,7 @@ def createApp(testing=False):
     @application.route("/questions/save", methods=["POST"])
     @jwt_required()
     def saveQuestion():
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         user = User.query.filter_by(id=currentUserId).first()
         if not user:
             return jsonify(message="User not found"), 404
@@ -454,7 +454,7 @@ def createApp(testing=False):
     @application.route("/questions/<questionId>", methods=["GET"])
     @jwt_required()
     def loadQuestion(questionId):
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         question = SavedQuestion.query.filter_by(
             userId=currentUserId,
             id=questionId,
@@ -466,7 +466,7 @@ def createApp(testing=False):
     @application.route("/questions/<questionId>", methods=["DELETE"])
     @jwt_required()
     def deleteQuestion(questionId):
-        currentUserId = get_jwt_identity()
+        currentUserId = int(get_jwt_identity())
         question = SavedQuestion.query.filter_by(
             userId=currentUserId,
             id=questionId,
